@@ -1,24 +1,31 @@
 package edu.washington.gllc.conversationstarter
 
+import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
-import android.support.design.widget.Snackbar
+import android.preference.PreferenceManager
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
-
-import kotlinx.android.synthetic.main.activity_main.*
+import android.widget.TextView
 
 class MainActivity : AppCompatActivity() {
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        setSupportActionBar(toolbar)
+        setSupportActionBar(findViewById(R.id.toolbar))
+        val prefs = PreferenceManager.getDefaultSharedPreferences(this)
+        setText(prefs)
+    }
 
-        fab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                    .setAction("Action", null).show()
-        }
+    override fun onResume() {
+        super.onResume()
+        val prefs = PreferenceManager.getDefaultSharedPreferences(this)
+        setText(prefs)
+    }
+
+    private fun setText(prefs: SharedPreferences) {
+        findViewById<TextView>(R.id.hello).text = prefs.getBoolean("evil_mode", false).toString()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -32,7 +39,10 @@ class MainActivity : AppCompatActivity() {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         return when (item.itemId) {
-            R.id.action_settings -> true
+            R.id.action_settings -> {
+                startActivity(Intent(this, SettingsActivity::class.java))
+                return true
+            }
             else -> super.onOptionsItemSelected(item)
         }
     }
