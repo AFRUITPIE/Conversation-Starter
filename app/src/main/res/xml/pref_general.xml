@@ -19,8 +19,8 @@
         android:summary="@string/convo_repo_summary"
         android:title="@string/convo_repo_title" />
     <SeekBarPreference
-        android:defaultValue="5"
         android:key="refresh_time"
+        android:defaultValue="5"
         android:max="60"
         android:title="Time to refresh repo" />
 </PreferenceScreen>

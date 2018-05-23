@@ -20,10 +20,15 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
+        // Gets the preferences again
         val prefs = PreferenceManager.getDefaultSharedPreferences(this)
         setText(prefs)
     }
 
+
+    /**
+     * TODO: Remove this useless function
+     */
     private fun setText(prefs: SharedPreferences) {
         findViewById<TextView>(R.id.hello).text = prefs.getBoolean("evil_mode", false).toString()
     }

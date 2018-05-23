@@ -13,4 +13,7 @@
     <string name="convo_repo_title">Conversation Repository</string>
     <string name="convo_repo_summary">Load conversations from the internet. Leave blank to use the defaults.</string>
 
+    <string name="evil_repo_title">Evil Conversation Repository</string>
+    <string name="evil_repo_summary">Load evil conversations from the internet. Leave blank to use the defaults.</string>
+
 </resources>

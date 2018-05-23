@@ -138,7 +138,9 @@ class SettingsActivity : AppCompatPreferenceActivity() {
                             null)
 
             } else if (preference.key == "refresh_time") {
-                preference.setSummary(stringValue + " minutes")
+                preference.summary = "$stringValue minutes"
+            } else if (preference.key == "convo_repo" && value == "null") {
+                preference.summary = "No repository set"
             } else {
                 // For all other preferences, set the summary to the value's
                 // simple string representation.
