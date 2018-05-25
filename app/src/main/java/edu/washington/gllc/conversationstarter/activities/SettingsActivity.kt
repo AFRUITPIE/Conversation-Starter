@@ -1,4 +1,4 @@
-package edu.washington.gllc.conversationstarter
+package edu.washington.gllc.conversationstarter.activities
 
 import android.annotation.TargetApi
 import android.content.Context
@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.preference.*
 import android.util.Log
 import android.view.MenuItem
+import edu.washington.gllc.conversationstarter.R
 
 /**
  * A [PreferenceActivity] that presents a set of application settings. On

@@ -1,4 +1,4 @@
-package edu.washington.gllc.conversationstarter
+package edu.washington.gllc.conversationstarter.activities
 
 import android.content.Intent
 import android.content.SharedPreferences
@@ -8,29 +8,31 @@ import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.TextView
+import edu.washington.gllc.conversationstarter.R
 
 class MainActivity : AppCompatActivity() {
+    private var prefs: SharedPreferences? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(findViewById(R.id.toolbar))
-        val prefs = PreferenceManager.getDefaultSharedPreferences(this)
-        setText(prefs)
+        prefs = PreferenceManager.getDefaultSharedPreferences(this)
+        setText()
     }
 
     override fun onResume() {
         super.onResume()
         // Gets the preferences again
-        val prefs = PreferenceManager.getDefaultSharedPreferences(this)
-        setText(prefs)
+        prefs = PreferenceManager.getDefaultSharedPreferences(this)
+        setText()
     }
-
 
     /**
      * TODO: Remove this useless function
      */
-    private fun setText(prefs: SharedPreferences) {
-        findViewById<TextView>(R.id.hello).text = prefs.getBoolean("evil_mode", false).toString()
+    private fun setText() {
+        findViewById<TextView>(R.id.hello).text = prefs?.getBoolean("evil_mode", false).toString()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

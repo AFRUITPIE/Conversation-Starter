@@ -1,4 +1,4 @@
-package edu.washington.gllc.conversationstarter
+package edu.washington.gllc.conversationstarter.activities
 
 import android.content.res.Configuration
 import android.os.Bundle

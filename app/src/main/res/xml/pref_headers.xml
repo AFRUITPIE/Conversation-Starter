@@ -3,10 +3,10 @@
     <!-- These settings headers are only used on tablets. -->
 
     <header
-        android:fragment="edu.washington.gllc.conversationstarter.SettingsActivity$GeneralPreferenceFragment"
+        android:fragment="edu.washington.gllc.conversationstarter.activities.SettingsActivity$GeneralPreferenceFragment"
         android:title="@string/pref_header_general" />
 
     <header
-        android:fragment="edu.washington.gllc.conversationstarter.SettingsActivity$EvilPreferenceFragment"
+        android:fragment="edu.washington.gllc.conversationstarter.activities.SettingsActivity$EvilPreferenceFragment"
         android:title="@string/pref_header_evil" />
 </preference-headers>
