@@ -1,4 +1,19 @@
 <resources>
     <string name="app_name">Conversation Starter</string>
     <string name="action_settings">Settings</string>
+    <string name="title_activity_settings">Settings</string>
+
+    <!-- Strings related to Settings -->
+    <string name="pref_header_general">General</string>
+    <string name="pref_header_evil">Evil Mode</string>
+
+    <string name="evil_mode_title">Activate Evil Mode</string>
+    <string name="evil_mode_summary">Only activate this if you\'re a monster</string>
+
+    <string name="convo_repo_title">Conversation Repository</string>
+    <string name="convo_repo_summary">Load conversations from the internet. Leave blank to use the defaults.</string>
+
+    <string name="evil_repo_title">Evil Conversation Repository</string>
+    <string name="evil_repo_summary">Load evil conversations from the internet. Leave blank to use the defaults.</string>
+
 </resources>
