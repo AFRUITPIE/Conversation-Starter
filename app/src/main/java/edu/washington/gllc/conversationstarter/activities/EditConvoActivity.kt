@@ -16,20 +16,12 @@ class EditConvoActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
         prefs = PreferenceManager.getDefaultSharedPreferences(this)
 
-        // Get list of subjects from the application
-//        val listOfSubjects = ArrayList<String>()
-//        for ((index, quiz) in app.quizRepo.Quizzes.withIndex()) {
-//            listOfSubjects.add(index, quiz.title)
-//        }
-//
-//        val subjectList: ListView = view.findViewById(R.id.list_subject)
-//        val mAdapter = ArrayAdapter<String>(context, android.R.layout.simple_list_item_1, android.R.id.text1, listOfSubjects)
-//        subjectList.adapter = mAdapter
-//        app.listAdapter = mAdapter
-//        subjectList.setOnItemClickListener { parent, view, position, id -> openQuiz(view, position, app) }
-
+        // TODO: Get this convo list from SharedPreferences, probably as the form of a JSON string
         val convoList = ArrayList<String>()
 
+        // TODO: Make this display a list where clicking on one of the convos allows for deleting
+
+        // TODO: Make this fab open a dialog for adding a conversation
         fab_add_convo.setOnClickListener { view ->
             Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                     .setAction("Action", null).show()

@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.preference.PreferenceManager
 import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -61,7 +60,6 @@ class MainActivity : AppCompatActivity() {
                     val mySnackbar = Snackbar.make(findViewById<View>(R.id.activity_main_coordinator),
                             R.string.snackbar_repo, Snackbar.LENGTH_LONG)
                     mySnackbar.setAction(R.string.snackbar_action, {
-                        Log.i("asdf", prefs.toString())
                         prefs?.edit()?.putString("convo_repo", "")?.apply()
                         startActivity(Intent(this, EditConvoActivity::class.java))
                     })
