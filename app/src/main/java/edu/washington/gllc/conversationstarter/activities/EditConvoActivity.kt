@@ -19,6 +19,9 @@ class EditConvoActivity : AppCompatActivity() {
         // TODO: Get this convo list from SharedPreferences, probably as the form of a JSON string
         val convoList = ArrayList<String>()
 
+        val convosJSON = prefs?.getString("convos_normal", "")
+
+
         // TODO: Make this display a list where clicking on one of the convos allows for deleting
 
         // TODO: Make this fab open a dialog for adding a conversation
