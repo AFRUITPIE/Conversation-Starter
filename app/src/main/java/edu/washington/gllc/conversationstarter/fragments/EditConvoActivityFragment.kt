@@ -13,8 +13,8 @@ import edu.washington.gllc.conversationstarter.R
 class EditConvoActivityFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_edit_convo, container, false)
+        val view = inflater.inflate(R.layout.fragment_edit_convo, container, false)
 
-
+        return view
     }
 }

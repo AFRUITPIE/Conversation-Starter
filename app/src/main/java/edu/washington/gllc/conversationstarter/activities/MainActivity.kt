@@ -14,12 +14,12 @@ import com.android.volley.Request
 import com.android.volley.Response
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
+import com.google.gson.Gson
 import edu.washington.gllc.conversationstarter.R
-
 
 class MainActivity : AppCompatActivity() {
     private var prefs: SharedPreferences? = null
-    private var conversations: Array<String>? = null
+    private var conversations: Array<String> = arrayOf("", "") // Empty placeholder conversations
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,6 +28,9 @@ class MainActivity : AppCompatActivity() {
         setSupportActionBar(findViewById(R.id.toolbar))
 
         prefs = PreferenceManager.getDefaultSharedPreferences(this)
+
+        // FIXME: Load a real array from somewhere else
+        prefs?.edit()?.putString("convo_array", "[\"Placeholder conversation!\"]")?.apply()
 
         conversations = loadLocalConvo()
         if (prefs?.getString("convo_repo", "") != "") {
@@ -43,6 +46,7 @@ class MainActivity : AppCompatActivity() {
 
     /**
      * Loads conversations from an online source
+     * @param url url of the json file
      */
     private fun loadOnlineConvo(url: String): Array<String> {
         // Instantiate the RequestQueue.
@@ -66,15 +70,16 @@ class MainActivity : AppCompatActivity() {
      * Loads the conversations from the built-in ones
      */
     private fun loadLocalConvo(): Array<String> {
-        val repoString = prefs!!.getString("convo_list", "")
+        val repoString = prefs!!.getString("convo_array", "")
         return handleConvoJson(repoString)
     }
 
     /**
      * Parses conversations from a JSON string
+     * @param convoJson string version of the conversation (FROM JSON)
      */
     private fun handleConvoJson(convoJson: String): Array<String> {
-        return arrayOf("Hello!")
+        return Gson().fromJson(convoJson, Array<String>::class.java)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -93,17 +98,20 @@ class MainActivity : AppCompatActivity() {
                 return true
             }
             R.id.action_edit -> {
+                val intent = Intent(this, EditConvoActivity::class.java)
+                intent.putExtra("conversations", conversations) // Add conversations to intent
                 if (prefs?.getString("convo_repo", "") != "") {
-
+                    // Snackbar to warn user of online repo being set,
+                    // also allows for clearing of the online repo
                     val mySnackbar = Snackbar.make(findViewById<View>(R.id.activity_main_coordinator),
                             R.string.snackbar_repo, Snackbar.LENGTH_LONG)
                     mySnackbar.setAction(R.string.snackbar_action, {
                         prefs?.edit()?.putString("convo_repo", "")?.apply()
-                        startActivity(Intent(this, EditConvoActivity::class.java))
+                        startActivity(intent)
                     })
                     mySnackbar.show()
                 } else {
-                    startActivity(Intent(this, EditConvoActivity::class.java))
+                    startActivity(intent)
                 }
                 return true
             }
