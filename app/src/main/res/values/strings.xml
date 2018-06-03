@@ -20,4 +20,9 @@
 
     <string name="snackbar_repo">Online repo set</string>
     <string name="snackbar_action">Clear repo</string>
+
+    <string name="delete_dialog_message">Deleting this cannot be undone</string>
+    <string name="delete_dialog_title">Delete</string>
+    <string name="delete_ok">Yes, delete</string>
+    <string name="delete_cancel">No, keep it</string>
 </resources>
