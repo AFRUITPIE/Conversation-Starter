@@ -26,7 +26,16 @@ class MainActivity : AppCompatActivity() {
 
         setContentView(R.layout.activity_main)
         setSupportActionBar(findViewById(R.id.toolbar))
+        start()
+    }
 
+    override fun onResume() {
+        super.onResume()
+        start()
+    }
+
+    // Handles all the starting stuff like getting preferences and setting conversations
+    private fun start() {
         prefs = PreferenceManager.getDefaultSharedPreferences(this)
 
         // FIXME: Load a real array from somewhere else
@@ -36,12 +45,6 @@ class MainActivity : AppCompatActivity() {
         if (prefs?.getString("convo_repo", "") != "") {
             loadOnlineConvo(prefs!!.getString("convo_repo", ""))
         }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        // Gets the preferences again
-        prefs = PreferenceManager.getDefaultSharedPreferences(this)
     }
 
     /**
@@ -55,6 +58,7 @@ class MainActivity : AppCompatActivity() {
         val stringRequest = StringRequest(Request.Method.GET, url,
                 Response.Listener<String> { response ->
                     conversations = handleConvoJson(response)
+                    prefs?.edit()?.putString("convo_array", response)?.apply() // Override with new conversations from internet
                     Log.i(localClassName, "Set new normal conversation successfully")
                 },
                 Response.ErrorListener {
@@ -63,7 +67,7 @@ class MainActivity : AppCompatActivity() {
 
         // Add the request to the RequestQueue.
         queue.add(stringRequest)
-        return handleConvoJson("Hello!") // TODO: Replace placeholder with response
+        return handleConvoJson("[\"Hello!\"]") // TODO: Replace placeholder with response
     }
 
     /**
