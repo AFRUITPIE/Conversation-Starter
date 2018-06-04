@@ -25,4 +25,6 @@
     <string name="delete_dialog_title">Delete</string>
     <string name="delete_ok">Yes, delete</string>
     <string name="delete_cancel">No, keep it</string>
+
+    <string name="add_convo_hint">Put a new conversation starter here</string>
 </resources>
