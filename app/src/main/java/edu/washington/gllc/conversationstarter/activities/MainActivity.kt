@@ -36,9 +36,10 @@ class MainActivity : AppCompatActivity() {
     private fun start() {
         prefs = PreferenceManager.getDefaultSharedPreferences(this)
 
-        // Ensures this preference is not null, that causes runtime errors for first launch
-        // handleConvoJson("[\"Placeholder conversation\"]")
-
+        // Create empty value JUST for the first launch of the app
+        if (prefs?.getString("convo_array", "") == "") {
+            handleConvoJson("[]")
+        }
 
         // Load local conversations just in case no online repo is not set
         loadLocalConvo()
