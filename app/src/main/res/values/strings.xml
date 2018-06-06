@@ -27,4 +27,7 @@
     <string name="delete_cancel">No, keep it</string>
 
     <string name="add_convo_hint">Put a new conversation starter here</string>
+    <string name="text_mainFragment_startConversation">Start a conversation with someone!</string>
+    <string name="text_mainFragment_editConversationStarters">View or edit your conversation starters!</string>
+    <string name="text_mainFragment_viewConversations">View your recent SMS conversations.</string>
 </resources>

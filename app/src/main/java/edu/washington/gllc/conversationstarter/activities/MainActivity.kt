@@ -24,6 +24,7 @@ class MainActivity : AppCompatActivity() {
 
         setContentView(R.layout.activity_main)
         setSupportActionBar(findViewById(R.id.toolbar))
+        prefs = PreferenceManager.getDefaultSharedPreferences(this)
         start()
     }
 
@@ -94,6 +95,7 @@ class MainActivity : AppCompatActivity() {
     private fun resetConversations() {
         handleConvoJson("[\"Hello\", \"Hey, long time no see! What's up?\", \"Lol what's up kiddo\", \"Hey what's up?\", \"You want to go get dinner or something soon?\", \"The mitochondria is the powerhouse of the cell\", \"Android development is pretty cool\", \"Want to get coffee tomorrow?\", \"This is from the PLACEHOLDERS!\"]")
     }
+
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
