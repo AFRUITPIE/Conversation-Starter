@@ -28,10 +28,9 @@
             android:name=".activities.SettingsActivity"
             android:label="@string/title_activity_settings" />
         <activity
-            android:name=".activities.EditConvoActivity"
-            android:label="@string/title_activity_edit_convo"
-            android:parentActivityName=".activities.MainActivity"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:name=".activities.TabbedConvoActivity"
+            android:label="@string/title_activity_tabbed_convo"
+            android:parentActivityName=".activities.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="edu.washington.gllc.conversationstarter.activities.MainActivity" />

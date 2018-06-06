@@ -37,4 +37,8 @@
     <string name="text_startConversationFragment_contactName">Not yet chosen…</string>
     <string name="text_startConversationFragment_contactPhoneNumLabel">Phone Number:</string>
     <string name="text_startConversationFragment_contactPhoneNum">Not yet chosen…</string>
+    <string name="title_activity_tabbed_convo">TabbedConvoActivity</string>
+    <string name="tab_tabbedConvoActivity_local">Local</string>
+    <string name="tab_tabbedConvoActivity_online">Online</string>
+    <string name="tab_tabbedConvoActivity_included">Built-In</string>
 </resources>
