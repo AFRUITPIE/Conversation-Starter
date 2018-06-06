@@ -31,13 +31,15 @@ class MainActivity : AppCompatActivity() {
         prefs = PreferenceManager.getDefaultSharedPreferences(this)
 //        setText()
 
+        // Sets up the first menu item's (starting a conversation's) button
         val initConvoFab = findViewById<FloatingActionButton>(R.id.fab_mainFragment_startConversation)
         initConvoFab.setOnClickListener {
-            Toast.makeText(this, "click", Toast.LENGTH_SHORT).show()
-            val intent = Intent(this, ControllerActivity::class.java)
+//            Toast.makeText(this, "click", Toast.LENGTH_SHORT).show()
+            val intent = Intent(this, StartConversationActivity::class.java)
 
             startActivity(intent)
         }
+
         start()
     }
 
