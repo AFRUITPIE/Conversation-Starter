@@ -5,15 +5,10 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import android.preference.PreferenceManager
 import android.support.design.widget.FloatingActionButton
-import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.Button
-import android.widget.TextView
-import android.widget.Toast
-import android.view.View
 import com.android.volley.Request
 import com.android.volley.Response
 import com.android.volley.toolbox.StringRequest
@@ -64,11 +59,6 @@ class MainActivity : AppCompatActivity() {
         if (prefs?.getString("convo_repo", "") != "") {
             loadOnlineConvo(prefs!!.getString("convo_repo", ""))
         }
-
-        // If there's no local conversation, reset it to some placeholder conversations
-        if (prefs?.getString("convo_array", "") == "[]") {
-            resetConversations()
-        }
     }
 
     /**
@@ -104,8 +94,6 @@ class MainActivity : AppCompatActivity() {
      */
     private fun handleConvoJson(convoJson: String) {
         prefs?.edit()?.putString("convo_array", convoJson)?.apply() // Override with new conversations from internet
-    }
-
         // Re-compile all three conversation sources
         var allConvos: Array<String> = Gson().fromJson(prefs?.getString("convo_local", "[]"), Array<String>::class.java) +
                 Gson().fromJson(prefs?.getString("convo_online", "[]"), Array<String>::class.java) +
