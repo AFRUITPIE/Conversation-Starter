@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/tab_tabbedConvoActivity_local"
+        android:title="@string/tab_tabbedConvoActivity_local" />
+
+    <item
+        android:id="@+id/tab_tabbedConvoActivity_online"
+        android:title="@string/tab_tabbedConvoActivity_online" />
+    <item
+        android:id="@+id/tab_tabbedConvoActivity_included"
+        android:title="@string/tab_tabbedConvoActivity_included" />
+
+</menu>
