@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activities.StartConversationActivityFragment"
+    tools:showIn="@layout/activity_start_conversation">
+
+    <Button
+        android:id="@+id/button_startConversationFragment_chooseContact"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="35dp"
+        android:text="@string/button_startConversationFragment_chooseContact"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textView_startConversationFragment_contactNameLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="74dp"
+        android:layout_marginTop="27dp"
+        android:text="@string/text_startConversationFragment_contactNameLabel"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/button_startConversationFragment_chooseContact" />
+
+    <TextView
+        android:id="@+id/textView_startConversationFragment_contactPhoneNumLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="26dp"
+        android:text="@string/text_startConversationFragment_contactPhoneNumLabel"
+        app:layout_constraintEnd_toEndOf="@+id/textView_startConversationFragment_contactNameLabel"
+        app:layout_constraintTop_toBottomOf="@+id/textView_startConversationFragment_contactNameLabel" />
+
+    <TextView
+        android:id="@+id/textView_startConversationFragment_contactName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="27dp"
+        android:text="@string/text_startConversationFragment_contactName"
+        android:textStyle="italic"
+        android:textColor="#989ba0"
+        app:layout_constraintStart_toEndOf="@+id/textView_startConversationFragment_contactNameLabel"
+        app:layout_constraintTop_toBottomOf="@+id/button_startConversationFragment_chooseContact" />
+
+    <TextView
+        android:id="@+id/textView_startConversationFragment_contactPhoneNum"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="26dp"
+        android:text="@string/text_startConversationFragment_contactPhoneNum"
+        android:textStyle="italic"
+        android:textColor="#989ba0"
+        app:layout_constraintStart_toStartOf="@+id/textView_startConversationFragment_contactName"
+        app:layout_constraintTop_toBottomOf="@+id/textView_startConversationFragment_contactName" />
+
+</android.support.constraint.ConstraintLayout>
