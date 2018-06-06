@@ -134,7 +134,7 @@
         />
 
         <android.support.design.widget.FloatingActionButton
-            android:id="@+id/floatingActionButton3"
+            android:id="@+id/fab_mainFragment_viewConversations"
             android:src="@android:drawable/ic_menu_recent_history"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

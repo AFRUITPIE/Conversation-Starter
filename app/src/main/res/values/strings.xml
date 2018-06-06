@@ -19,4 +19,5 @@
     <string name="text_mainFragment_startConversation">Start a conversation with someone!</string>
     <string name="text_mainFragment_editConversationStarters">View or edit your conversation starters!</string>
     <string name="text_mainFragment_viewConversations">View your recent SMS conversations.</string>
+    <string name="title_activity_start_conversation">StartConversationActivity</string>
 </resources>

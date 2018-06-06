@@ -4,10 +4,13 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.preference.PreferenceManager
+import android.support.design.widget.FloatingActionButton
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.Button
 import android.widget.TextView
+import android.widget.Toast
 import edu.washington.gllc.conversationstarter.R
 
 class MainActivity : AppCompatActivity() {
@@ -19,6 +22,14 @@ class MainActivity : AppCompatActivity() {
         setSupportActionBar(findViewById(R.id.toolbar))
         prefs = PreferenceManager.getDefaultSharedPreferences(this)
 //        setText()
+
+        val initConvoFab = findViewById<FloatingActionButton>(R.id.fab_mainFragment_startConversation)
+        initConvoFab.setOnClickListener {
+            Toast.makeText(this, "click", Toast.LENGTH_SHORT).show()
+            val intent = Intent(this, ControllerActivity::class.java)
+
+            startActivity(intent)
+        }
     }
 
     override fun onResume() {

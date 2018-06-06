@@ -22,5 +22,10 @@
         <activity
             android:name=".activities.SettingsActivity"
             android:label="@string/title_activity_settings" />
+        <activity
+            android:name=".activities.StartConversationActivity"
+            android:label="@string/title_activity_start_conversation"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
+
 </manifest>
