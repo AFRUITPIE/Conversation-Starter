@@ -30,4 +30,11 @@
     <string name="text_mainFragment_startConversation">Start a conversation with someone!</string>
     <string name="text_mainFragment_editConversationStarters">View or edit your conversation starters!</string>
     <string name="text_mainFragment_viewConversations">View your recent SMS conversations.</string>
+    <string name="title_activity_start_conversation">StartConversationActivity</string>
+
+    <string name="button_startConversationFragment_chooseContact">CHOOSE A CONTACT</string>
+    <string name="text_startConversationFragment_contactNameLabel">Contact Name:</string>
+    <string name="text_startConversationFragment_contactName">Not yet chosen…</string>
+    <string name="text_startConversationFragment_contactPhoneNumLabel">Phone Number:</string>
+    <string name="text_startConversationFragment_contactPhoneNum">Not yet chosen…</string>
 </resources>

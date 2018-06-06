@@ -4,11 +4,15 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.preference.PreferenceManager
+import android.support.design.widget.FloatingActionButton
 import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.Button
+import android.widget.TextView
+import android.widget.Toast
 import android.view.View
 import com.android.volley.Request
 import com.android.volley.Response
@@ -25,6 +29,17 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         setSupportActionBar(findViewById(R.id.toolbar))
         prefs = PreferenceManager.getDefaultSharedPreferences(this)
+//        setText()
+
+        // Sets up the first menu item's (starting a conversation's) button
+        val initConvoFab = findViewById<FloatingActionButton>(R.id.fab_mainFragment_startConversation)
+        initConvoFab.setOnClickListener {
+//            Toast.makeText(this, "click", Toast.LENGTH_SHORT).show()
+            val intent = Intent(this, StartConversationActivity::class.java)
+
+            startActivity(intent)
+        }
+
         start()
     }
 
