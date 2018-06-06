@@ -2,6 +2,7 @@
     <string name="app_name">Conversation Starter</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_settings">Settings</string>
+    <string name="action_edit">Edit Conversations</string>
 
     <!-- Strings related to Settings -->
     <string name="pref_header_general">General</string>
@@ -15,7 +16,17 @@
 
     <string name="evil_repo_title">Evil Conversation Repository</string>
     <string name="evil_repo_summary">Load evil conversations from the internet. Leave blank to use the defaults.</string>
+    <string name="title_activity_edit_convo">Edit Conversations</string>
 
+    <string name="snackbar_repo">Online repo set</string>
+    <string name="snackbar_action">Clear repo</string>
+
+    <string name="delete_dialog_message">Deleting this cannot be undone</string>
+    <string name="delete_dialog_title">Delete</string>
+    <string name="delete_ok">Yes, delete</string>
+    <string name="delete_cancel">No, keep it</string>
+
+    <string name="add_convo_hint">Put a new conversation starter here</string>
     <string name="text_mainFragment_startConversation">Start a conversation with someone!</string>
     <string name="text_mainFragment_editConversationStarters">View or edit your conversation starters!</string>
     <string name="text_mainFragment_viewConversations">View your recent SMS conversations.</string>
