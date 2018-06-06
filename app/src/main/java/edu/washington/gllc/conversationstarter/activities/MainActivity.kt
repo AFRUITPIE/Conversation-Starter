@@ -18,22 +18,22 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         setSupportActionBar(findViewById(R.id.toolbar))
         prefs = PreferenceManager.getDefaultSharedPreferences(this)
-        setText()
+//        setText()
     }
 
     override fun onResume() {
         super.onResume()
         // Gets the preferences again
         prefs = PreferenceManager.getDefaultSharedPreferences(this)
-        setText()
+//        setText()
     }
 
     /**
      * TODO: Remove this useless function
      */
-    private fun setText() {
-        findViewById<TextView>(R.id.hello).text = prefs?.getBoolean("evil_mode", false).toString()
-    }
+//    private fun setText() {
+//        findViewById<TextView>(R.id.hello).text = prefs?.getBoolean("evil_mode", false).toString()
+//    }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
