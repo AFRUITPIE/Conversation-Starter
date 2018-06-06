@@ -77,9 +77,10 @@ class StartConversationActivity : AppCompatActivity() {
                     null,
                     null
             )
+
             // Save the message to data class
-            val timestamp = Calendar.getInstance().time.toString()
-            val newLogEntry = ConversationStarterData(contactDisplayName as String, contactPhoneNum as String, msgContents as String, timestamp)
+            timestamp = Calendar.getInstance().time.toString()
+            val newLogEntry = ConversationStarterData(contactDisplayName as String, contactPhoneNum as String, msgContents as String, timestamp as String)
             Log.i("startConversation", newLogEntry.toString())
             // Get existing log from SharedPrefs
             if (!prefs!!.contains("convo_log")) {
@@ -88,14 +89,19 @@ class StartConversationActivity : AppCompatActivity() {
                     commit()
                 }
             }
+
+            // Add the new log entry and save it to sharedprefs
             var convoLogSerialized = prefs!!.getString("convo_log", "default")
-            // TODO: Add new entry to log (is overwriting entire log right now)
             val collectionType: Type = object : TypeToken<Collection<ConversationStarterData>>() { }.type
             val convoLogList: MutableList<ConversationStarterData> = Gson().fromJson(convoLogSerialized, collectionType)
             convoLogList.add(newLogEntry)
             val newConvoLogArray = convoLogList.toTypedArray()
             convoLogSerialized = Gson().toJson(newConvoLogArray)
             Log.i("startConversation", convoLogSerialized)
+            with(prefs!!.edit()) {
+                putString("convo_log", convoLogSerialized)
+                commit()
+            }
         }
 
         // Start an intent to choose a contact via the device's default phone/contacts app
@@ -104,6 +110,9 @@ class StartConversationActivity : AppCompatActivity() {
             val i = Intent(Intent.ACTION_PICK, ContactsContract.CommonDataKinds.Phone.CONTENT_URI)
             startActivityForResult(i, PICK_CONTACT)
         }
+
+        // Set up back button
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent) {
