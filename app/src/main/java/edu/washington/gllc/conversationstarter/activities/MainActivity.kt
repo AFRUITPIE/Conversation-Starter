@@ -58,7 +58,11 @@ class MainActivity : AppCompatActivity() {
 
         // Load online repo if one is set
         if (prefs?.getString("convo_repo", "") != "") {
-            loadOnlineConvo(prefs!!.getString("convo_repo", ""))
+            if (prefs!!.getBoolean("evil_mode", false)) {
+                loadOnlineConvo(prefs!!.getString("convo_repo_evil", ""))
+            } else {
+                loadOnlineConvo(prefs!!.getString("convo_repo", ""))
+            }
         }
 
         // Log the current state of the array
@@ -114,7 +118,14 @@ class MainActivity : AppCompatActivity() {
         // Update the repo
         when(key) {
             "convo_local" -> appInstance.repository.setLocalStarters(convoJson)
-            "convo_online" -> appInstance.repository.setRepoStarters(convoJson)
+
+            "convo_online" -> {
+                if (prefs!!.getBoolean("evil_mode", false)) {
+                    appInstance.repository.setEvilRepoStarters(convoJson)
+                } else {
+                    appInstance.repository.setRepoStarters(convoJson)
+                }
+            }
         }
         prefs?.edit()?.putString(key, convoJson)?.apply() // Override with new conversations from internet
         // Re-compile all three conversation sources

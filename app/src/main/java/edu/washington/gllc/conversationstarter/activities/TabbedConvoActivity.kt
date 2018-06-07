@@ -19,7 +19,6 @@ class TabbedConvoActivity : AppCompatActivity() {
     private var prefs: SharedPreferences? = null
     private var appInstance = ConversationStarterApp.getSingletonInstance()
 
-
     private val mOnNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
         when (item.itemId) {
             R.id.tab_tabbedConvoActivity_local -> {
