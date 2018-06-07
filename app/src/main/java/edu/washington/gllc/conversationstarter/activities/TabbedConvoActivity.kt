@@ -7,6 +7,9 @@ import android.preference.PreferenceManager
 import android.support.design.widget.BottomNavigationView
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
+import android.view.MenuItem
+import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.EditText
 import android.widget.ListView
@@ -46,8 +49,16 @@ class TabbedConvoActivity : AppCompatActivity() {
         setContentView(R.layout.activity_tabbed_convo)
         prefs = PreferenceManager.getDefaultSharedPreferences(this)
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
-
-        setListAdapter("convo_local") // default to local conversations
+        if(prefs?.getBoolean("evil_mode", false) == true) {
+            fab_add_convo.hide()
+            setListAdapter("convo_online")
+            val mBottomNavView = findViewById<BottomNavigationView>(R.id.navigation)
+            mBottomNavView.menu.findItem(R.id.tab_tabbedConvoActivity_local).isVisible = false
+            mBottomNavView.findViewById<View>(R.id.tab_tabbedConvoActivity_local).visibility = View.GONE
+            mBottomNavView.selectedItemId = R.id.tab_tabbedConvoActivity_online
+        } else {
+            setListAdapter("convo_local") // default to local conversations
+        }
         // Allow the fab to add to the local conversations
         fab_add_convo.setOnClickListener { view ->
             val builder = AlertDialog.Builder(this)
@@ -75,16 +86,25 @@ class TabbedConvoActivity : AppCompatActivity() {
 
     // Sets the adapter of the list to whatever the string key value is
     private fun setListAdapter(key: String) {
-        var conversations = Gson().fromJson(prefs?.getString(key, "[]"), Array<String>::class.java)
-        if (key == "convo_included") {
-            conversations = appInstance.repository.getBakedInStarters()
-        }
-        if (key == "convo_local") {
-            setListViewToDelete()
-        } else {
+        if(prefs?.getBoolean("evil_mode", false) == true) {
+            var conversations = appInstance.repository.getEvilRepoStarters()
+            if (key == "convo_included") {
+                conversations = appInstance.repository.getBakedInEvilStarters()
+            }
             findViewById<ListView>(R.id.list_convo_edit).setOnItemClickListener { parent, view, position, id -> /* Do Nothing */ }
+            findViewById<ListView>(R.id.list_convo_edit).adapter = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, android.R.id.text1, conversations)
+        } else {
+            var conversations = Gson().fromJson(prefs?.getString(key, "[]"), Array<String>::class.java)
+            if (key == "convo_included") {
+                conversations = appInstance.repository.getBakedInStarters()
+            }
+            if (key == "convo_local") {
+                setListViewToDelete()
+            } else {
+                findViewById<ListView>(R.id.list_convo_edit).setOnItemClickListener { parent, view, position, id -> /* Do Nothing */ }
+            }
+            findViewById<ListView>(R.id.list_convo_edit).adapter = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, android.R.id.text1, conversations)
         }
-        findViewById<ListView>(R.id.list_convo_edit).adapter = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, android.R.id.text1, conversations)
     }
 
     // Updates the preference value of the conversation at key
@@ -99,7 +119,7 @@ class TabbedConvoActivity : AppCompatActivity() {
             builder.setMessage(R.string.delete_dialog_message)
                     .setTitle("${getString(R.string.delete_dialog_title)} \"${tempLocalConversations[position]}\"?")
 
-            // Button for confirming deletion of the converation
+            // Button for confirming deletion of the conversation
             builder.setPositiveButton(R.string.delete_ok, DialogInterface.OnClickListener { dialog, dialogId ->
                 var newConversations = emptyArray<String>()
                 for ((index, conversation) in tempLocalConversations.withIndex()) {
