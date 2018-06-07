@@ -14,9 +14,11 @@ import com.android.volley.Response
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import com.google.gson.Gson
+import edu.washington.gllc.conversationstarter.ConversationStarterApp
 import edu.washington.gllc.conversationstarter.R
 
 class MainActivity : AppCompatActivity() {
+    private var appInstance = ConversationStarterApp.getSingletonInstance()
     private var prefs: SharedPreferences? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -33,25 +35,11 @@ class MainActivity : AppCompatActivity() {
         }
 
         // Sets up the second main menu item's button (editing conversation starters)
-        findViewById<FloatingActionButton>(R.id.fab_mainFragment_editConversationStarters).setOnClickListener { startActivity(Intent(this, TabbedConvoActivity::class.java)) }
-        // val editConvoStartersFab = findViewById<FloatingActionButton>(R.id.fab_mainFragment_editConversationStarters)
-        // editConvoStartersFab.setOnClickListener {
-        //     val intent = Intent(this, EditConvoActivity::class.java)
-        //     if (prefs?.getString("convo_repo", "") != "") {
-        //         // Snackbar to warn user of online repo being set,
-        //         // also allows for clearing of the online repo
-        //         val mySnackbar = Snackbar.make(findViewById<View>(R.id.activity_main_coordinator),
-        //                 R.string.snackbar_repo, Snackbar.LENGTH_LONG)
-        //         mySnackbar.setAction(R.string.snackbar_action, {
-        //             prefs?.edit()?.putString("convo_repo", "")?.apply()
-        //             resetConversations()
-        //             startActivity(intent)
-        //         })
-        //         mySnackbar.show()
-        //     } else {
-        //         startActivity(intent)
-        //     }
-        // }
+        findViewById<FloatingActionButton>(R.id.fab_mainFragment_editConversationStarters)
+        val editConvoStartersFab = findViewById<FloatingActionButton>(R.id.fab_mainFragment_editConversationStarters)
+        editConvoStartersFab.setOnClickListener {
+            startActivity(Intent(this, TabbedConvoActivity::class.java))
+        }
 
         // Initialize application
         start()
