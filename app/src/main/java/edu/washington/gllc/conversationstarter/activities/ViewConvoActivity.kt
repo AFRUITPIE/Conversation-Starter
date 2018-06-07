@@ -7,7 +7,6 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.preference.PreferenceManager
 import android.view.View
-import android.widget.ArrayAdapter
 import android.widget.ListView
 import android.widget.SimpleAdapter
 import android.widget.TextView
@@ -15,6 +14,7 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import edu.washington.gllc.conversationstarter.R
 import edu.washington.gllc.conversationstarter.classes.ConversationStarterData
+import kotlinx.android.synthetic.main.activity_start_conversation.*
 import java.lang.reflect.Type
 
 class ViewConvoActivity : AppCompatActivity() {
@@ -22,50 +22,26 @@ class ViewConvoActivity : AppCompatActivity() {
 
     private lateinit var conversationLog : List<ConversationStarterData>
 
-    /*
-    Start Conversation: file containing sent messages saved in Shared Preferences
-        File format:
-            {
-                recipientName: String
-                recipientPhoneNumber: String
-                messageContent: String
-                timestamp: datetime
-            }
-
-    View Conversations: Read the file and display in a list view
-        Reading the file:
-            read conversation log
-
-        ListView of messages in order of timestamp (assuming ordered already in list msg# -> msg1, most recent to oldest)
-            val adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, messagesList)
-            listView.adapter = adapter
-
-        Tapping on an item opens up the default SMS app and thread for the contact
-            .setOnClickListener {
-                val smsIntent = Intent(Intent.ACTION_VIEW, Uri.parse("smsto:#phonenumber"))
-                startActivity(smsIntent)
-            }
-        Should return to app from SMS thread
-*/
-
-    // Reverse message log to show most recent messages on top
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_view_convo)
-
+        setSupportActionBar(toolbar)
         prefs = PreferenceManager.getDefaultSharedPreferences(this)
         val listView: ListView = findViewById(R.id.list_view_convo)
 
         // list reversed so that most recent messages appear on top in list view
         conversationLog = getConvoLog().reversed()
 
+        // when conversationLog is empty, "There are no messages" is displayed
+        // otherwise we want to populate the list view
         if (conversationLog.isNotEmpty()) {
             findViewById<TextView>(R.id.textView_no_messages).visibility = View.GONE
             val conversationsInfo = getConversationsInfo()
             val messages = conversationsInfo.messages
             val messageInfo = conversationsInfo.messageInfo
             val list = ArrayList<Map<String, String>>()
+
+            // list view to have item (message) and subitem (contact, timestamp)
             for (i in messages.indices) {
                 val item = HashMap<String, String>(2)
                 item["line1"] = messages[i]
@@ -76,14 +52,19 @@ class ViewConvoActivity : AppCompatActivity() {
                     arrayOf("line1", "line2"), intArrayOf(R.id.line1, R.id.line2))
             listView.adapter = adapter
 
+            // send user to SMS app, specifically to messaging thread with given contact
             listView.setOnItemClickListener { _, _, position, _ ->
                 val phoneNum = conversationLog!![position].recipientPhoneNum
                 startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("smsto:" + phoneNum)))
             }
         }
+
+        // Set up back button
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
     }
 
     private fun getConvoLog() : List<ConversationStarterData> {
+        // conversation log in shared preferences, retrieve and deserialize into a list
         var convoLogSerialized = prefs!!.getString("convo_log", "default")
         if (convoLogSerialized == "default") {
             return ArrayList<ConversationStarterData>()
@@ -104,6 +85,4 @@ class ViewConvoActivity : AppCompatActivity() {
     }
 
     data class MessagesInfo(val messages : List<String>, val messageInfo : List<String>)
-
-
 }
