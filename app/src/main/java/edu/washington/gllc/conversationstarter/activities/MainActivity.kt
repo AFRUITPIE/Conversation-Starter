@@ -1,9 +1,9 @@
 package edu.washington.gllc.conversationstarter.activities
 
+import android.Manifest
 import android.app.Activity
 import android.app.AlarmManager
 import android.app.PendingIntent
-import android.Manifest
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.SharedPreferences
@@ -17,7 +17,6 @@ import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.Toast
 import android.widget.TextView
 import android.widget.Toast
 import com.android.volley.Request
@@ -27,7 +26,6 @@ import com.android.volley.toolbox.Volley
 import com.google.gson.Gson
 import edu.washington.gllc.conversationstarter.ConversationStarterApp
 import edu.washington.gllc.conversationstarter.R
-import java.util.*
 import edu.washington.gllc.conversationstarter.classes.RepoRefreshAlarmReceiver
 
 class MainActivity : AppCompatActivity() {
