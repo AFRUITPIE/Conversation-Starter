@@ -41,4 +41,9 @@
     <string name="tab_tabbedConvoActivity_local">Local</string>
     <string name="tab_tabbedConvoActivity_online">Online</string>
     <string name="tab_tabbedConvoActivity_included">Built-In</string>
+
+    <!-- Strings for SharedPrefs -->
+    <string name="CONVO_ARRAY">convo_array</string>
+    <string name="CONVO_INCLUDED">convo_included</string>
+    <string name="CONVO_REPO">convo_repo</string>
 </resources>
