@@ -10,6 +10,9 @@ import android.preference.*
 import android.util.Log
 import android.view.MenuItem
 import edu.washington.gllc.conversationstarter.R
+import android.content.SharedPreferences
+
+
 
 /**
  * A [PreferenceActivity] that presents a set of application settings. On
@@ -25,6 +28,18 @@ class SettingsActivity : AppCompatPreferenceActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val prefListener: SharedPreferences.OnSharedPreferenceChangeListener
+
+        //listener on changed preference:
+        val prefs = PreferenceManager.getDefaultSharedPreferences(this)
+
+        prefListener = SharedPreferences.OnSharedPreferenceChangeListener { prefs, key ->
+            Log.i("SettingsActivity", "Settings key changed: $key")
+            if (key == "evil_mode") {
+                Log.i("SettingsActivity", "Evil mode toggled")
+            }
+        }
+        prefs.registerOnSharedPreferenceChangeListener(prefListener)
         setupActionBar()
     }
 
