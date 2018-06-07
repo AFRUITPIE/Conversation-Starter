@@ -52,6 +52,12 @@
                 android:value="edu.washington.gllc.conversationstarter.activities.MainActivity" />
         </activity>
         <activity android:name=".activities.ViewConvoActivity"></activity>
+
+        <receiver android:name=".classes.RepoRefreshAlarmReceiver">
+            <intent-filter>
+                <action android:name="edu.washington.gllc.conversationstarter.classes.RepoRefreshAlarmReceiver" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>
