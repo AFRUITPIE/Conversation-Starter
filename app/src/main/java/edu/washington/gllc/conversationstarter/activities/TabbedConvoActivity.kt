@@ -7,8 +7,6 @@ import android.preference.PreferenceManager
 import android.support.design.widget.BottomNavigationView
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
-import android.util.Log
-import android.view.MenuItem
 import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.EditText
@@ -17,6 +15,7 @@ import com.google.gson.Gson
 import edu.washington.gllc.conversationstarter.ConversationStarterApp
 import edu.washington.gllc.conversationstarter.R
 import kotlinx.android.synthetic.main.activity_tabbed_convo.*
+
 
 class TabbedConvoActivity : AppCompatActivity() {
     private var prefs: SharedPreferences? = null
@@ -49,6 +48,8 @@ class TabbedConvoActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_tabbed_convo)
         prefs = PreferenceManager.getDefaultSharedPreferences(this)
+
+
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
         if(prefs?.getBoolean("evil_mode", false) == true) {
             fab_add_convo.hide()
@@ -74,6 +75,7 @@ class TabbedConvoActivity : AppCompatActivity() {
                 appInstance.repository.addLocalStarter((dialog).findViewById<EditText>(R.id.txt_add_convo)?.text.toString())
                 // Reset listView adapter to reflect the new changes
                 setListAdapter("convo_local")
+
             })
 
             // Blank cancel button
