@@ -2,18 +2,17 @@ package edu.washington.gllc.conversationstarter.activities
 
 import android.app.Activity
 import android.os.Bundle
-import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
 import android.widget.Button
 import edu.washington.gllc.conversationstarter.R
 
-import kotlinx.android.synthetic.main.activity_start_conversation.*
 import android.provider.ContactsContract
 import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Handler
+import android.net.Uri
 import android.preference.PreferenceManager
 import android.telephony.SmsManager
 import android.util.Log
@@ -23,8 +22,8 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import edu.washington.gllc.conversationstarter.ConversationStarterApp
 import edu.washington.gllc.conversationstarter.classes.ConversationStarterData
+import kotlinx.android.synthetic.main.activity_start_conversation.*
 import java.lang.reflect.Type
-import java.time.LocalDateTime
 import java.util.*
 
 
@@ -67,28 +66,49 @@ class StartConversationActivity : AppCompatActivity() {
             fun ClosedRange<Int>.random() =
                     Random().nextInt(endInclusive - 1) + start
             // Get a random conversation starter from the saved array
-            val convoStartersArrayLength = convoStartersArray?.size
-            if (convoStartersArrayLength == null || convoStartersArrayLength == 0) {
-                Toast.makeText(this,
-                        "Uh-oh! It looks like you don't have any conversation starters! Go back to the main menu and add some starters, or enable the built-in starters.",
-                        Toast.LENGTH_LONG)
-                        .show()
-            } else if (convoStartersArrayLength == 1) {
-                msgContents = convoStartersArray?.get(0)
+            var convoStartersArrayLength = convoStartersArray?.size
+            if (convoStartersArrayLength == null) {
+                convoStartersArrayLength = 0
+            }
+            val randomMsgIndex = (0..(convoStartersArrayLength - 1)).random()
+            val randomMsg = convoStartersArray?.get(randomMsgIndex)
+            msgContents = randomMsg
+            Toast.makeText(this, randomMsg, Toast.LENGTH_SHORT).show()
+
+            // If evil mode is off, send normally.
+            // If evil mode is on, send it to a random contact 50% of the time
+            if (prefs!!.getBoolean("evil_mode", false) && Random().nextBoolean()) {
+                Log.i(localClassName, "Sending a message to the wrong contact")
+                //  Get a random phone number from sent messages in the scariest way possible
+                val uri = Uri.parse("content://sms")
+                val cursor = this.contentResolver.query(uri, null, null, null, null)
+                val randomIndex = Random().nextInt(cursor.count)
+                if (cursor.moveToFirst()) {
+                    for (i in 0..cursor.count) {
+                        val phoneNumber = cursor.getString(cursor.getColumnIndexOrThrow("address")).toString()
+                        if (i == randomIndex) {
+                            smsManager.sendTextMessage(
+                                    phoneNumber,
+                                    null,
+                                    msgContents,
+                                    null,
+                                    null
+                            )
+                        }
+                    }
+                }
             } else {
-                val randomMsgIndex = (0..(convoStartersArrayLength)).random()
-                val randomMsg = convoStartersArray?.get(randomMsgIndex)
-                msgContents = randomMsg
+                // Send the random message to the chosen contact
+                Log.i(localClassName, "Sending a message to the correct contact")
+                smsManager.sendTextMessage(
+                        contactPhoneNum,
+                        null,
+                        msgContents,
+                        null,
+                        null
+                )
             }
 
-            // Send the random message to the chosen contact
-            smsManager.sendTextMessage(
-                    contactPhoneNum,
-                    null,
-                    msgContents,
-                    null,
-                    null
-            )
             Toast.makeText(this, "Conversation started with $contactDisplayName. Message: \"$msgContents\"", Toast.LENGTH_SHORT).show()
 
             // If using Evil Mode, if recipient does not respond in 5 seconds, another text is sent.
@@ -106,7 +126,6 @@ class StartConversationActivity : AppCompatActivity() {
 
                 }, 1000 * 15 * 60)
             }
-
 
             // Save the message to data class
             timestamp = Calendar.getInstance().time.toString()
