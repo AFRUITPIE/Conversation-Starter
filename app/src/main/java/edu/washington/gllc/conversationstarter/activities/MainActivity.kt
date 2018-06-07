@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.TextView
 import com.android.volley.Request
 import com.android.volley.Response
 import com.android.volley.toolbox.StringRequest
@@ -16,6 +17,7 @@ import com.android.volley.toolbox.Volley
 import com.google.gson.Gson
 import edu.washington.gllc.conversationstarter.ConversationStarterApp
 import edu.washington.gllc.conversationstarter.R
+import java.util.*
 
 class MainActivity : AppCompatActivity() {
     private var appInstance = ConversationStarterApp.getSingletonInstance()
@@ -47,6 +49,13 @@ class MainActivity : AppCompatActivity() {
             startActivity(Intent(this, ViewConvoActivity::class.java))
         }
 
+        // Evil Mode specific changes
+        if (prefs!!.getBoolean("evil_mode", false)) {
+            val editConvosTextView = findViewById<TextView>(R.id.textView_mainFragment_editConversationStarters)
+            editConvosTextView.text = getString(R.string.text_mainFragment_viewEvilConversationStarters)
+        }
+
+
         // Initialize application
         start()
     }
@@ -68,7 +77,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         // Log the current state of the array
-        Log.i(localClassName, "Current conversation array is: ${prefs?.getString("convo_array", "ERROR LOADING ARRAY")}")
+        Log.i(localClassName, "Current conversation array is: ${prefs?.getString("convo_log", "ERROR LOADING ARRAY")}")
     }
 
     /**

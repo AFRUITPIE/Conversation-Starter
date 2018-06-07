@@ -55,7 +55,11 @@ class StartConversationActivity : AppCompatActivity() {
 //        val convoStarters = prefs!!.getString("convo_array", "default")
 //        Log.i(TAG, convoStarters)
 //        convoStartersArray = Gson().fromJson(convoStarters, Array<String>::class.java)
-        convoStartersArray = appInstance.repository.getAllStarters()
+        convoStartersArray = if (prefs!!.getBoolean("evil_mode", false)) {
+            appInstance.repository.getAllEvilModeStarters()
+        } else {
+            appInstance.repository.getAllStarters()
+        }
 
         // Set up floating action button message
         fab.setOnClickListener { view ->
@@ -73,7 +77,6 @@ class StartConversationActivity : AppCompatActivity() {
             val randomMsgIndex = (0..(convoStartersArrayLength - 1)).random()
             val randomMsg = convoStartersArray?.get(randomMsgIndex)
             msgContents = randomMsg
-            Toast.makeText(this, randomMsg, Toast.LENGTH_SHORT).show()
 
             // If evil mode is off, send normally.
             // If evil mode is on, send it to a random contact 50% of the time
@@ -168,11 +171,11 @@ class StartConversationActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent) {
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         // If the contact selection was successful (if the request code matches PICK_CONTACT)
         if (requestCode == PICK_CONTACT && resultCode == Activity.RESULT_OK) {
             // Get the contact URI, then use a cursor to extract the contact Display Name and Phone Number
-            val contactUri = data.data
+            val contactUri = data?.data
             val cursor = contentResolver.query(contactUri!!, null, null, null, null)
             cursor!!.moveToFirst()
             val phoneNumColumn = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)
