@@ -65,6 +65,8 @@ class MainActivity : AppCompatActivity() {
     // Handles all the starting stuff like getting preferences and setting conversations
     private fun start() {
         prefs = PreferenceManager.getDefaultSharedPreferences(this)
+        // Ensures there are some garbage placeholders
+        prefs?.edit()?.putString("convo_included", "[\"Hello\", \"Hey, long time no see! What's up?\", \"Lol what's up kiddo\", \"Hey what's up?\", \"You want to go get dinner or something soon?\", \"The mitochondria is the powerhouse of the cell\", \"Android development is pretty cool\", \"Want to get coffee tomorrow?\", \"This is from the PLACEHOLDERS!\"]")?.apply()
 
         // Create empty value JUST for the first launch of the app
         if (prefs?.getString("convo_array", "") == "") {
