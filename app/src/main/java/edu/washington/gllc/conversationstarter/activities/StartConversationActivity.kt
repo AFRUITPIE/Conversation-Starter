@@ -41,10 +41,15 @@ class StartConversationActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         // Set up
+        prefs = PreferenceManager.getDefaultSharedPreferences(this)
+        var isEvil = prefs!!.getBoolean("evil_mode", false)
+        if (isEvil) {
+            setTheme(R.style.DarkAppTheme)
+        }
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_start_conversation)
         setSupportActionBar(toolbar)
-        prefs = PreferenceManager.getDefaultSharedPreferences(this)
         val smsManager = SmsManager.getDefault()
 
         // Disable floating action button until contact is chosen

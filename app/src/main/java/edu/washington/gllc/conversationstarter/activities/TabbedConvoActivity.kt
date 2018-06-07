@@ -45,9 +45,15 @@ class TabbedConvoActivity : AppCompatActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        prefs = PreferenceManager.getDefaultSharedPreferences(this)
+        var isEvil = prefs!!.getBoolean("evil_mode", false)
+        if (isEvil) {
+            setTheme(R.style.DarkAppTheme)
+        }
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_tabbed_convo)
-        prefs = PreferenceManager.getDefaultSharedPreferences(this)
+
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
         if(prefs?.getBoolean("evil_mode", false) == true) {
             fab_add_convo.hide()

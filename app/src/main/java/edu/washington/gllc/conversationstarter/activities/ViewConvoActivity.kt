@@ -23,10 +23,15 @@ class ViewConvoActivity : AppCompatActivity() {
     private lateinit var conversationLog : List<ConversationStarterData>
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        prefs = PreferenceManager.getDefaultSharedPreferences(this)
+        var isEvil = prefs!!.getBoolean("evil_mode", false)
+        if (isEvil) {
+            setTheme(R.style.DarkAppTheme)
+        }
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_view_convo)
         setSupportActionBar(toolbar)
-        prefs = PreferenceManager.getDefaultSharedPreferences(this)
         val listView: ListView = findViewById(R.id.list_view_convo)
 
         // list reversed so that most recent messages appear on top in list view

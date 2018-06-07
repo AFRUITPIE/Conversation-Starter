@@ -36,11 +36,15 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         // Set up
-        setTheme(R.style.DarkAppTheme)
+        prefs = PreferenceManager.getDefaultSharedPreferences(this)
+        var isEvil = prefs!!.getBoolean("evil_mode", false)
+        if (isEvil) {
+            setTheme(R.style.DarkAppTheme)
+        }
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(findViewById(R.id.toolbar))
-        prefs = PreferenceManager.getDefaultSharedPreferences(this)
         // Sets up the first menu item's (starting a conversation's) button
         val initConvoFab = findViewById<FloatingActionButton>(R.id.fab_mainFragment_startConversation)
         initConvoFab.setOnClickListener {
