@@ -1,16 +1,15 @@
 package edu.washington.gllc.conversationstarter.classes
 
 import android.content.Context
-import android.os.Environment
 import android.util.Log
-import android.widget.Toast
 import com.google.gson.Gson
-import edu.washington.gllc.conversationstarter.ConversationStarterApp
+import com.google.gson.reflect.TypeToken
 import java.io.File
-import java.io.FileWriter
+import java.lang.reflect.Type
 
 class ConversationStarterRepo {
 //    private var appInstance = ConversationStarterApp.getSingletonInstance()
+    private var _log = mutableListOf<ConversationStarterData>()
     private var _localStarters = mutableListOf<String>()
     private var _repoStarters = mutableListOf<String>()
     private var _evilRepoStarters = mutableListOf<String>()
@@ -21,8 +20,7 @@ class ConversationStarterRepo {
             "You want to go get dinner or something soon?",
             "The mitochondria is the powerhouse of the cell",
             "Android development is pretty cool",
-            "Want to get coffee tomorrow?",
-            "This is from the PLACEHOLDERS!"
+            "Want to get coffee tomorrow?"
     )
     private var _bakedInEvilStarters = listOf<String>("We need to talk.",
             "Hey, my parents aren't home ;)",
@@ -33,10 +31,10 @@ class ConversationStarterRepo {
             "I disagree with your views on religion",
             "I fart in your general direction",
             "Have you heard of Info 466?",
-            "Yarr I'm a pirate an comin' for yer booty",
+            "Yarr I'm a pirate an' I'ma comin' for yer booty",
             "I know it's 11am on a Monday, but do you want to go to a strip club?",
             "Hey can I buy a g?",
-            "Don't tell *contact name* but I'm pretty upset with them...",
+            "Don't tell your mom, but I'm pretty upset with her...",
             "Hey check this out https://bit.ly/IqT6zt")
 
     public fun getLocalStarters(): Array<String> {
@@ -146,9 +144,7 @@ class ConversationStarterRepo {
     public fun expandLocalDataFromStorage(context: Context) {
         try {
             val intStorageFile = File(context.applicationContext.filesDir, "cs_local")
-            if (!intStorageFile.exists()) {
-                _localStarters = mutableListOf<String>()
-            } else {
+            if (intStorageFile.exists()) {
                 val stringFromStorage = intStorageFile.readText()
                 setLocalStarters(stringFromStorage)
             }
@@ -156,6 +152,50 @@ class ConversationStarterRepo {
         catch(e: Exception) {
             Log.e(TAG, e.toString())
         }
+    }
+
+    public fun saveLogDataToStorage(context: Context, logArray: Array<ConversationStarterData>?) {
+        try {
+            val intStorageFile = File(context.applicationContext.filesDir, "cs_log")
+            if (intStorageFile.exists()) {
+                intStorageFile.delete()
+            }
+            var stringToSave = ""
+            if (logArray != null) {
+                stringToSave = Gson().toJson(logArray)
+            } else {
+                stringToSave = Gson().toJson(_log)
+            }
+            intStorageFile.createNewFile()
+            intStorageFile.writeText(stringToSave)
+        }
+        catch(e: Exception) {
+            Log.e(TAG, e.toString())
+        }
+    }
+
+    public fun expandLogDataFromStorage(context: Context) {
+        try {
+            val intStorageFile = File(context.applicationContext.filesDir, "cs_log")
+            if (intStorageFile.exists()) {
+                val stringFromStorage = intStorageFile.readText()
+                val collectionType: Type = object : TypeToken<Collection<ConversationStarterData>>() { }.type
+                val convoLogList: MutableList<ConversationStarterData> = Gson().fromJson(stringFromStorage, collectionType)
+                _log = convoLogList
+            }
+        }
+        catch(e: Exception) {
+            Log.e(TAG, e.toString())
+        }
+    }
+
+    public fun getLog(): Array<ConversationStarterData> {
+        return _log.toTypedArray()
+    }
+
+    public fun addToLog(context: Context, newEntry: ConversationStarterData) {
+        _log.add(newEntry)
+        saveLogDataToStorage(context, null)
     }
 
     companion object {

@@ -12,6 +12,7 @@ import android.widget.SimpleAdapter
 import android.widget.TextView
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import edu.washington.gllc.conversationstarter.ConversationStarterApp
 import edu.washington.gllc.conversationstarter.R
 import edu.washington.gllc.conversationstarter.classes.ConversationStarterData
 import kotlinx.android.synthetic.main.activity_start_conversation.*
@@ -19,6 +20,7 @@ import java.lang.reflect.Type
 
 class ViewConvoActivity : AppCompatActivity() {
     private var prefs: SharedPreferences? = null
+    private var appInstance = ConversationStarterApp.getSingletonInstance()
 
     private lateinit var conversationLog : List<ConversationStarterData>
 
@@ -65,13 +67,14 @@ class ViewConvoActivity : AppCompatActivity() {
 
     private fun getConvoLog() : List<ConversationStarterData> {
         // conversation log in shared preferences, retrieve and deserialize into a list
-        var convoLogSerialized = prefs!!.getString("convo_log", "default")
-        if (convoLogSerialized == "default") {
-            return ArrayList<ConversationStarterData>()
-        } else {
-            val collectionType: Type = object : TypeToken<Collection<ConversationStarterData>>() {}.type
-            return Gson().fromJson(convoLogSerialized, collectionType)
-        }
+//        var convoLogSerialized = prefs!!.getString("convo_log", "default")
+//        if (convoLogSerialized == "default") {
+//            return ArrayList<ConversationStarterData>()
+//        } else {
+//            val collectionType: Type = object : TypeToken<Collection<ConversationStarterData>>() {}.type
+//            return Gson().fromJson(convoLogSerialized, collectionType)
+//        }
+        return appInstance.repository.getLog().toList()
     }
 
     private fun getConversationsInfo() : MessagesInfo {
