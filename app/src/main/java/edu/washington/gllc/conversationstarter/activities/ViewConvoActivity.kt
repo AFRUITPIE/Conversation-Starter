@@ -6,15 +6,20 @@ import android.net.Uri
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.preference.PreferenceManager
+import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.ListView
+import android.widget.TextView
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import edu.washington.gllc.conversationstarter.R
-import org.json.JSONObject
+import edu.washington.gllc.conversationstarter.classes.ConversationStarterData
+import java.lang.reflect.Type
 
 class ViewConvoActivity : AppCompatActivity() {
     private var prefs: SharedPreferences? = null
 
-    private var JSONMessagesList: ArrayList<JSONObject>? = null
+    private lateinit var conversationLog : List<ConversationStarterData>
 
     /*
     Start Conversation: file containing sent messages saved in Shared Preferences
@@ -28,17 +33,7 @@ class ViewConvoActivity : AppCompatActivity() {
 
     View Conversations: Read the file and display in a list view
         Reading the file:
-            read all keys following some convention (msg1, msg2, ...., msg#)
-            convert values (String) to JSON object (already JSON formatted)
-                var messagesList = ArrayList<JSONObject>()
-                SharedPreferences sharedPrefs = this.getSharedPreferences( .... )
-                String defValue = "";
-                int i = 0;
-                while (defValue != "done")
-                    String msg = sharedPrefs.getString("msg" + i, "done"); // returns "done" if msg does not exist
-                    JSONObject jsonMsg = JSONObject(msg)
-                    messagesList.add(jsonMsg)
-                    i++;
+            read conversation log
 
         ListView of messages in order of timestamp (assuming ordered already in list msg# -> msg1, most recent to oldest)
             val adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, messagesList)
@@ -58,27 +53,36 @@ class ViewConvoActivity : AppCompatActivity() {
 
         prefs = PreferenceManager.getDefaultSharedPreferences(this)
         val listView: ListView = findViewById(R.id.list_view_convo)
-        /*
-        val JSONMessageList = getMessages()
-        val adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, getMessages())
-        listView.adapter = adapter
 
-        listView.setOnItemClickListener { parent, view, position, id ->
+        conversationLog = getConvoLog()
+        if (conversationLog.isNotEmpty()) {
+            findViewById<TextView>(R.id.textView_no_messages).visibility = View.GONE
+            val adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, getMessages())
+            listView.adapter = adapter
 
+            listView.setOnItemClickListener { _, _, position, _ ->
+                val index = conversationLog!!.size - 1 - position
+                val phoneNum = conversationLog!![index].recipientPhoneNum
+                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("smsto:" + phoneNum)))
+            }
         }
-        */
     }
 
-    private fun getMessages(): List<String> {
-        var messagesList = ArrayList<String>()
-        var defValue = ""
-        var i = 0
-        while (defValue != "done") {
-            val msg = prefs?.getString("msg" + i, "done")
-            val jsonMsg = JSONObject(msg) // need to parse from string to jsonobject
-            JSONMessagesList?.add(jsonMsg)
-            i++
+    private fun getConvoLog() : List<ConversationStarterData> {
+        var convoLogSerialized = prefs!!.getString("convo_log", "default")
+        if (convoLogSerialized == "default") {
+            return ArrayList<ConversationStarterData>()
+        } else {
+            val collectionType: Type = object : TypeToken<Collection<ConversationStarterData>>() {}.type
+            return Gson().fromJson(convoLogSerialized, collectionType)
         }
-        return messagesList
+    }
+
+    private fun getMessages() : List<String> {
+        var messages = ArrayList<String>()
+        for (msg: ConversationStarterData in conversationLog) {
+            messages.add(msg.messageContents)
+        }
+        return messages
     }
 }
