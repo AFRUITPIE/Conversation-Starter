@@ -8,6 +8,7 @@
     <uses-permission android:name="android.permission.SEND_SMS"/>
 
     <application
+        android:name=".ConversationStarterApp"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -26,7 +27,12 @@
         </activity>
         <activity
             android:name=".activities.SettingsActivity"
-            android:label="@string/title_activity_settings" />
+            android:label="@string/title_activity_settings"
+            android:parentActivityName=".activities.MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="edu.washington.gllc.conversationstarter.activities.MainActivity" />
+        </activity>
         <activity
             android:name=".activities.TabbedConvoActivity"
             android:label="@string/title_activity_tabbed_convo"

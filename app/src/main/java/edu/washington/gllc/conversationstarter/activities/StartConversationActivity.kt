@@ -19,6 +19,10 @@ import android.util.Log
 import android.widget.TextView
 import android.widget.Toast
 import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+import edu.washington.gllc.conversationstarter.classes.ConversationStarterData
+import java.lang.reflect.Type
+import java.time.LocalDateTime
 import java.util.*
 
 
@@ -46,25 +50,32 @@ class StartConversationActivity : AppCompatActivity() {
 
         // Get conversation starters
         val convoStarters = prefs!!.getString("convo_array", "default")
+        Log.i(TAG, convoStarters)
         convoStartersArray = Gson().fromJson(convoStarters, Array<String>::class.java)
 
         // Set up floating action button message
         fab.setOnClickListener { view ->
             // Show the "Message Sent!" snackbar
-            Snackbar.make(view, "Message sent!", Snackbar.LENGTH_LONG)
-                    .setAction("Action", null).show()
+//            Snackbar.make(view, "Message sent!", Snackbar.LENGTH_LONG)
+//                    .setAction("Action", null).show()
             // Set the .random() function on a range
             fun ClosedRange<Int>.random() =
                     Random().nextInt(endInclusive - 1) + start
             // Get a random conversation starter from the saved array
-            var convoStartersArrayLength = convoStartersArray?.size
-            if (convoStartersArrayLength == null) {
-                convoStartersArrayLength = 0
+            val convoStartersArrayLength = convoStartersArray?.size
+            if (convoStartersArrayLength == null || convoStartersArrayLength == 0) {
+                Toast.makeText(this,
+                        "Uh-oh! It looks like you don't have any conversation starters! Go back to the main menu and add some starters, or enable the built-in starters.",
+                        Toast.LENGTH_LONG)
+                        .show()
+            } else if (convoStartersArrayLength == 1) {
+                msgContents = convoStartersArray?.get(0)
+            } else {
+                val randomMsgIndex = (0..(convoStartersArrayLength)).random()
+                val randomMsg = convoStartersArray?.get(randomMsgIndex)
+                msgContents = randomMsg
             }
-            val randomMsgIndex = (0..(convoStartersArrayLength - 1)).random()
-            val randomMsg = convoStartersArray?.get(randomMsgIndex)
-            msgContents = randomMsg
-            Toast.makeText(this, randomMsg, Toast.LENGTH_SHORT).show()
+
             // Send the random message to the chosen contact
             smsManager.sendTextMessage(
                     contactPhoneNum,
@@ -73,7 +84,36 @@ class StartConversationActivity : AppCompatActivity() {
                     null,
                     null
             )
-            // TODO: Save the message to a log
+            Toast.makeText(this, "Conversation started with $contactDisplayName. Message: \"$msgContents\"", Toast.LENGTH_SHORT).show()
+
+            // Save the message to data class
+            timestamp = Calendar.getInstance().time.toString()
+            val newLogEntry = ConversationStarterData(contactDisplayName as String, contactPhoneNum as String, msgContents as String, timestamp as String)
+            Log.i(TAG, newLogEntry.toString())
+            // Get existing log from SharedPrefs
+            if (!prefs!!.contains("convo_log")) {
+                with(prefs!!.edit()) {
+                    putString("convo_log", "[]")
+                    commit()
+                }
+            }
+
+            // Add the new log entry and save it to sharedprefs
+            var convoLogSerialized = prefs!!.getString("convo_log", "default")
+            val collectionType: Type = object : TypeToken<Collection<ConversationStarterData>>() { }.type
+            val convoLogList: MutableList<ConversationStarterData> = Gson().fromJson(convoLogSerialized, collectionType)
+            convoLogList.add(newLogEntry)
+            val newConvoLogArray = convoLogList.toTypedArray()
+            convoLogSerialized = Gson().toJson(newConvoLogArray)
+            Log.i(TAG, convoLogSerialized)
+            with(prefs!!.edit()) {
+                putString("convo_log", convoLogSerialized)
+                commit()
+            }
+
+            // Return to main activity
+            val intent = Intent(this, MainActivity::class.java)
+            startActivity(intent)
         }
 
         // Start an intent to choose a contact via the device's default phone/contacts app
@@ -82,6 +122,9 @@ class StartConversationActivity : AppCompatActivity() {
             val i = Intent(Intent.ACTION_PICK, ContactsContract.CommonDataKinds.Phone.CONTENT_URI)
             startActivityForResult(i, PICK_CONTACT)
         }
+
+        // Set up back button
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent) {
@@ -95,8 +138,8 @@ class StartConversationActivity : AppCompatActivity() {
             val nameColumn = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME)
             contactPhoneNum = cursor.getString(phoneNumColumn)
             contactDisplayName = cursor.getString(nameColumn)
-            Log.i("startConversation", contactPhoneNum)
-            Log.i("startConversation", contactDisplayName)
+            Log.i(TAG, contactPhoneNum)
+            Log.i(TAG, contactDisplayName)
             cursor.close()
 
             // Update the TextViews with the selected contact's info
@@ -118,5 +161,6 @@ class StartConversationActivity : AppCompatActivity() {
 
     companion object {
         const val PICK_CONTACT: Int = 1337
+        const val TAG: String = "StartConversation"
     }
 }

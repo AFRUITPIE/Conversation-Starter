@@ -14,27 +14,34 @@ import com.android.volley.Response
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import com.google.gson.Gson
+import edu.washington.gllc.conversationstarter.ConversationStarterApp
 import edu.washington.gllc.conversationstarter.R
 
 class MainActivity : AppCompatActivity() {
+    private var appInstance = ConversationStarterApp.getSingletonInstance()
     private var prefs: SharedPreferences? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        // Set up
         super.onCreate(savedInstanceState)
-
         setContentView(R.layout.activity_main)
         setSupportActionBar(findViewById(R.id.toolbar))
         prefs = PreferenceManager.getDefaultSharedPreferences(this)
-        findViewById<FloatingActionButton>(R.id.fab_mainFragment_editConversationStarters).setOnClickListener { startActivity(Intent(this, TabbedConvoActivity::class.java)) }
         // Sets up the first menu item's (starting a conversation's) button
         val initConvoFab = findViewById<FloatingActionButton>(R.id.fab_mainFragment_startConversation)
         initConvoFab.setOnClickListener {
-//            Toast.makeText(this, "click", Toast.LENGTH_SHORT).show()
             val intent = Intent(this, StartConversationActivity::class.java)
-
             startActivity(intent)
         }
 
+        // Sets up the second main menu item's button (editing conversation starters)
+        findViewById<FloatingActionButton>(R.id.fab_mainFragment_editConversationStarters)
+        val editConvoStartersFab = findViewById<FloatingActionButton>(R.id.fab_mainFragment_editConversationStarters)
+        editConvoStartersFab.setOnClickListener {
+            startActivity(Intent(this, TabbedConvoActivity::class.java))
+        }
+
+        // Initialize application
         start()
     }
 
@@ -46,19 +53,16 @@ class MainActivity : AppCompatActivity() {
     // Handles all the starting stuff like getting preferences and setting conversations
     private fun start() {
         prefs = PreferenceManager.getDefaultSharedPreferences(this)
+        // Ensures there are some garbage placeholders
+        handleConvoJson("convo_included", "[\"Hello\", \"Hey, long time no see! What's up?\", \"Lol what's up kiddo\", \"Hey what's up?\", \"You want to go get dinner or something soon?\", \"The mitochondria is the powerhouse of the cell\", \"Android development is pretty cool\", \"Want to get coffee tomorrow?\", \"This is from the PLACEHOLDERS!\"]")
 
-        // Create empty value JUST for the first launch of the app
-        if (prefs?.getString("convo_array", "") == "") {
-            handleConvoJson("[]")
-        }
-
-        // Load local conversations just in case no online repo is not set
-        loadLocalConvo()
-
-        // Load online repo
+        // Load online repo if one is set
         if (prefs?.getString("convo_repo", "") != "") {
             loadOnlineConvo(prefs!!.getString("convo_repo", ""))
         }
+
+        // Log the current state of the array
+        Log.i(localClassName, "Current conversation array is: ${prefs?.getString("convo_array", "ERROR LOADING ARRAY")}")
     }
 
     /**
@@ -71,7 +75,7 @@ class MainActivity : AppCompatActivity() {
         // Request a string response from the provided URL.
         val stringRequest = StringRequest(Request.Method.GET, url,
                 Response.Listener<String> { response ->
-                    handleConvoJson(response)
+                    handleConvoJson("convo_online", response)
                     Log.i(localClassName, "Set new normal conversation successfully")
                 },
                 Response.ErrorListener {
@@ -82,18 +86,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
-     * Loads the conversations from the built-in ones
-     */
-    private fun loadLocalConvo() {
-        handleConvoJson(prefs!!.getString("convo_array", ""))
-    }
-
-    /**
      * Parses conversations from a JSON string
+     * @param key key of the conversation you want to add to
      * @param convoJson string version of the conversation (FROM JSON)
      */
-    private fun handleConvoJson(convoJson: String) {
-        prefs?.edit()?.putString("convo_array", convoJson)?.apply() // Override with new conversations from internet
+    private fun handleConvoJson(key: String, convoJson: String) {
+        prefs?.edit()?.putString(key, convoJson)?.apply() // Override with new conversations from internet
         // Re-compile all three conversation sources
         var allConvos: Array<String> = Gson().fromJson(prefs?.getString("convo_local", "[]"), Array<String>::class.java) +
                 Gson().fromJson(prefs?.getString("convo_online", "[]"), Array<String>::class.java) +
@@ -101,7 +99,6 @@ class MainActivity : AppCompatActivity() {
         // Override the master list with conversations
         prefs?.edit()?.putString("convo_array", Gson().toJson(allConvos))?.apply()
     }
-
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.

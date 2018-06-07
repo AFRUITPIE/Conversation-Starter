@@ -1,37 +1,37 @@
 <resources>
+    <!-- App name and activity titles -->
     <string name="app_name">Conversation Starter</string>
-    <string name="action_settings">Settings</string>
     <string name="title_activity_settings">Settings</string>
-    <string name="action_edit">Edit Conversations</string>
+    <string name="title_activity_start_conversation">Start a Conversation!</string>
+    <string name="title_activity_edit_convo">Your Conversation Starters</string>
 
-    <!-- Strings related to Settings -->
+    <!-- Strings related to Settings (SettingsActivity) -->
+    <string name="action_settings">Settings</string>
+    <string name="action_edit">Edit Conversations</string>
     <string name="pref_header_general">General</string>
     <string name="pref_header_evil">Evil Mode</string>
-
     <string name="evil_mode_title">Activate Evil Mode</string>
     <string name="evil_mode_summary">Only activate this if you\'re a monster</string>
-
     <string name="convo_repo_title">Conversation Repository</string>
     <string name="convo_repo_summary">Load conversations from the internet. Leave blank to use the defaults.</string>
-
     <string name="evil_repo_title">Evil Conversation Repository</string>
     <string name="evil_repo_summary">Load evil conversations from the internet. Leave blank to use the defaults.</string>
-    <string name="title_activity_edit_convo">Edit Conversations</string>
-
     <string name="snackbar_repo">Online repo set</string>
     <string name="snackbar_action">Clear repo</string>
 
+    <!-- Strings related to editing starters (EditConvoActivity) -->
     <string name="delete_dialog_message">Deleting this cannot be undone</string>
     <string name="delete_dialog_title">Delete</string>
     <string name="delete_ok">Yes, delete</string>
     <string name="delete_cancel">No, keep it</string>
-
     <string name="add_convo_hint">Put a new conversation starter here</string>
+
+    <!-- Strings related to the main menu (MainActivity) -->
     <string name="text_mainFragment_startConversation">Start a conversation with someone!</string>
     <string name="text_mainFragment_editConversationStarters">View or edit your conversation starters!</string>
-    <string name="text_mainFragment_viewConversations">View your recent SMS conversations.</string>
-    <string name="title_activity_start_conversation">StartConversationActivity</string>
+    <string name="text_mainFragment_viewConversations">View your recently started conversations.</string>
 
+    <!-- Strings related to starting a conversation (StartConversationActivity) -->
     <string name="button_startConversationFragment_chooseContact">CHOOSE A CONTACT</string>
     <string name="text_startConversationFragment_contactNameLabel">Contact Name:</string>
     <string name="text_startConversationFragment_contactName">Not yet chosen…</string>
