@@ -78,7 +78,7 @@ class MainActivity : AppCompatActivity() {
         start()
 
         // Return to settings upon evil mode toggle
-        if ( this.intent.extras.containsKey("source") ) {
+        if ( intent.hasExtra("source") ) {
 
             startActivity(Intent(this, SettingsActivity::class.java))
         }
