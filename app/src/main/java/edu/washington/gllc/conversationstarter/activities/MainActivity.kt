@@ -3,16 +3,22 @@ package edu.washington.gllc.conversationstarter.activities
 import android.app.Activity
 import android.app.AlarmManager
 import android.app.PendingIntent
+import android.Manifest
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.SharedPreferences
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.preference.PreferenceManager
 import android.support.design.widget.FloatingActionButton
+import android.support.v4.app.ActivityCompat
+import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.Toast
+import android.widget.TextView
 import android.widget.Toast
 import com.android.volley.Request
 import com.android.volley.Response
@@ -21,6 +27,7 @@ import com.android.volley.toolbox.Volley
 import com.google.gson.Gson
 import edu.washington.gllc.conversationstarter.ConversationStarterApp
 import edu.washington.gllc.conversationstarter.R
+import java.util.*
 import edu.washington.gllc.conversationstarter.classes.RepoRefreshAlarmReceiver
 
 class MainActivity : AppCompatActivity() {
@@ -40,6 +47,9 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
+        // Check permissions
+        checkPermissions()
+
         // Sets up the second main menu item's button (editing conversation starters)
         findViewById<FloatingActionButton>(R.id.fab_mainFragment_editConversationStarters)
         val editConvoStartersFab = findViewById<FloatingActionButton>(R.id.fab_mainFragment_editConversationStarters)
@@ -53,6 +63,13 @@ class MainActivity : AppCompatActivity() {
             startActivity(Intent(this, ViewConvoActivity::class.java))
         }
 
+        // Evil Mode specific changes
+        if (prefs!!.getBoolean("evil_mode", false)) {
+            val editConvosTextView = findViewById<TextView>(R.id.textView_mainFragment_editConversationStarters)
+            editConvosTextView.text = getString(R.string.text_mainFragment_viewEvilConversationStarters)
+        }
+
+
         // Initialize application
         start()
     }
@@ -60,6 +77,91 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         start()
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        when(requestCode) {
+            REQUEST_PERMISSION_CONTACTS -> {
+                Log.i("MainActivity", "contacts")
+                if (grantResults.isNotEmpty()
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    checkPermissions()
+                } else {
+                    Toast.makeText(this, "Sorry, cannot use Conversation Starter without that permission!", Toast.LENGTH_SHORT).show()
+                    this.finishAffinity()
+                }
+            }
+            REQUEST_PERMISSION_SEND_SMS -> {
+                Log.i("MainActivity", "send sms")
+                if (grantResults.isNotEmpty()
+                        && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+                    checkPermissions()
+                } else {
+                    Toast.makeText(this, "Sorry, cannot use Conversation Starter without that permission!", Toast.LENGTH_SHORT).show()
+                    this.finishAffinity()
+                }
+            }
+            REQUEST_PERMISSION_READ_SMS -> {
+                Log.i("MainActivity", "read sms")
+                if (grantResults.isNotEmpty()
+                        && grantResults[2] == PackageManager.PERMISSION_GRANTED) {
+                    checkPermissions()
+                } else {
+                    Toast.makeText(this, "Sorry, cannot use Conversation Starter without that permission!", Toast.LENGTH_SHORT).show()
+                    this.finishAffinity()
+                }
+            }
+            REQUEST_PERMISSION_ACCESS_NETWORK_STATE -> {
+                Log.i("MainActivity", "ans")
+                if (grantResults.isNotEmpty()
+                        && grantResults[3] == PackageManager.PERMISSION_GRANTED) {
+                    checkPermissions()
+                } else {
+                    Toast.makeText(this, "Sorry, cannot use Conversation Starter without that permission!", Toast.LENGTH_SHORT).show()
+                    this.finishAffinity()
+                }
+            }
+            REQUEST_PERMISSION_INTERNET -> {
+                Log.i("MainActivity", "internet")
+                if (grantResults.isNotEmpty()
+                        && grantResults[4] == PackageManager.PERMISSION_GRANTED) {
+                    checkPermissions()
+                } else {
+                    Toast.makeText(this, "Sorry, cannot use Conversation Starter without that permission!", Toast.LENGTH_SHORT).show()
+                    this.finishAffinity()
+                }
+            }
+        }
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+    }
+
+    private fun checkPermissions() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                   arrayOf(Manifest.permission.READ_CONTACTS, Manifest.permission.SEND_SMS, Manifest.permission.READ_SMS, Manifest.permission.ACCESS_NETWORK_STATE, Manifest.permission.INTERNET),
+                   REQUEST_PERMISSION_CONTACTS
+            )
+        } else if (ContextCompat.checkSelfPermission(this, Manifest.permission.SEND_SMS) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                    arrayOf(Manifest.permission.READ_CONTACTS, Manifest.permission.SEND_SMS, Manifest.permission.READ_SMS, Manifest.permission.ACCESS_NETWORK_STATE, Manifest.permission.INTERNET),
+                    REQUEST_PERMISSION_SEND_SMS
+            )
+        } else if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_SMS) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                    arrayOf(Manifest.permission.READ_CONTACTS, Manifest.permission.SEND_SMS, Manifest.permission.READ_SMS, Manifest.permission.ACCESS_NETWORK_STATE, Manifest.permission.INTERNET),
+                    REQUEST_PERMISSION_READ_SMS
+            )
+        } else if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_NETWORK_STATE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                    arrayOf(Manifest.permission.READ_CONTACTS, Manifest.permission.SEND_SMS, Manifest.permission.READ_SMS, Manifest.permission.ACCESS_NETWORK_STATE, Manifest.permission.INTERNET),
+                    REQUEST_PERMISSION_ACCESS_NETWORK_STATE
+            )
+        } else if (ContextCompat.checkSelfPermission(this, Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                    arrayOf(Manifest.permission.READ_CONTACTS, Manifest.permission.SEND_SMS, Manifest.permission.READ_SMS, Manifest.permission.ACCESS_NETWORK_STATE, Manifest.permission.INTERNET),
+                    REQUEST_PERMISSION_INTERNET
+            )
+        }
     }
 
     // Handles all the starting stuff like getting preferences and setting conversations
@@ -100,7 +202,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         // Log the current state of the array
-        Log.i(localClassName, "Current conversation array is: ${prefs?.getString("convo_array", "ERROR LOADING ARRAY")}")
+        Log.i(localClassName, "Current conversation array is: ${prefs?.getString("convo_log", "ERROR LOADING ARRAY")}")
     }
 
     /**
@@ -187,5 +289,13 @@ class MainActivity : AppCompatActivity() {
             }
             else -> super.onOptionsItemSelected(item)
         }
+    }
+
+    companion object {
+        const val REQUEST_PERMISSION_SEND_SMS = 0
+        const val REQUEST_PERMISSION_READ_SMS = 1
+        const val REQUEST_PERMISSION_CONTACTS = 3
+        const val REQUEST_PERMISSION_INTERNET = 4
+        const val REQUEST_PERMISSION_ACCESS_NETWORK_STATE = 5
     }
 }
