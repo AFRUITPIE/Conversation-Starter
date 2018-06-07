@@ -198,34 +198,46 @@ class MainActivity : AppCompatActivity() {
         val intent = Intent("edu.washington.gllc.conversationstarter.classes.RepoRefreshAlarmReceiver")
 
         // These handle the registering of alarm receivers for refreshing the repositories
-        if (prefs?.getString("convo_repo", "") != "" && !prefs!!.getBoolean("evil_mode", false)) {
-            receiver = RepoRefreshAlarmReceiver()
-            val intentFilter = IntentFilter("edu.washington.gllc.conversationstarter.classes.RepoRefreshAlarmReceiver")
-            loadOnlineConvo(prefs!!.getString("convo_repo", ""))
-            registerReceiver(receiver, intentFilter)
-            val alarmManager = getSystemService(Activity.ALARM_SERVICE) as AlarmManager
-            intent.putExtra("url", prefs?.getString("convo_repo", ""))
-            val pendingIntent = PendingIntent.getBroadcast(applicationContext, 234, intent, 0)
-            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP,
-                    System.currentTimeMillis(),
-                    (60 * 1000 * (prefs!!.getInt("refresh_time", 5) + 1)).toLong(),
-                    pendingIntent)
-            Log.i(localClassName, "Registered a regular online repo request timer")
+        if (prefs?.contains("convo_repo") as Boolean && !prefs!!.getBoolean("evil_mode", false)) {
+            if (prefs?.getString("convo_repo", "") != "") {
+                receiver = RepoRefreshAlarmReceiver()
+                val intentFilter = IntentFilter("edu.washington.gllc.conversationstarter.classes.RepoRefreshAlarmReceiver")
+                loadOnlineConvo(prefs!!.getString("convo_repo", ""))
+                registerReceiver(receiver, intentFilter)
+                val alarmManager = getSystemService(Activity.ALARM_SERVICE) as AlarmManager
+                intent.putExtra("url", prefs?.getString("convo_repo", ""))
+                val pendingIntent = PendingIntent.getBroadcast(applicationContext, 234, intent, 0)
+                alarmManager.setRepeating(AlarmManager.RTC_WAKEUP,
+                        System.currentTimeMillis(),
+                        (60 * 1000 * (prefs!!.getInt("refresh_time", 5) + 1)).toLong(),
+                        pendingIntent)
+                Log.i(localClassName, "Registered a regular online repo request timer")
+            } else {
+                appInstance.repository.setRepoStarters("[]")
+                appInstance.repository.saveRepoDataToStorage(this)
+            }
+
         }
 
-        if (prefs?.getString("convo_repo_evil", "") != "" && prefs!!.getBoolean("evil_mode", false)) {
-            val receiver = RepoRefreshAlarmReceiver()
-            val intentFilter = IntentFilter("edu.washington.gllc.conversationstarter.classes.RepoRefreshAlarmReceiver")
-            loadOnlineConvo(prefs!!.getString("convo_repo_evil", ""))
-            registerReceiver(receiver, intentFilter)
-            val alarmManager = getSystemService(Activity.ALARM_SERVICE) as AlarmManager
-            intent.putExtra("url", prefs?.getString("convo_repo_evil", ""))
-            val pendingIntent = PendingIntent.getBroadcast(applicationContext, 234, intent, 0)
-            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP,
-                    System.currentTimeMillis(),
-                    (60 * 1000 * (prefs!!.getInt("refresh_time_evil", 5) + 1)).toLong(),
-                    pendingIntent)
-            Log.i(localClassName, "Registered an evil online repo request timer")
+        if (prefs?.contains("convo_repo_evil") as Boolean && prefs!!.getBoolean("evil_mode", false)) {
+            if (prefs?.getString("convo_repo_evil", "") != "") {
+                val receiver = RepoRefreshAlarmReceiver()
+                val intentFilter = IntentFilter("edu.washington.gllc.conversationstarter.classes.RepoRefreshAlarmReceiver")
+                loadOnlineConvo(prefs!!.getString("convo_repo_evil", ""))
+                registerReceiver(receiver, intentFilter)
+                val alarmManager = getSystemService(Activity.ALARM_SERVICE) as AlarmManager
+                intent.putExtra("url", prefs?.getString("convo_repo_evil", ""))
+                val pendingIntent = PendingIntent.getBroadcast(applicationContext, 234, intent, 0)
+                alarmManager.setRepeating(AlarmManager.RTC_WAKEUP,
+                        System.currentTimeMillis(),
+                        (60 * 1000 * (prefs!!.getInt("refresh_time_evil", 5) + 1)).toLong(),
+                        pendingIntent)
+                Log.i(localClassName, "Registered an evil online repo request timer")
+            } else {
+                appInstance.repository.setEvilRepoStarters("[]")
+                appInstance.repository.saveEvilRepoDataToStorage(this)
+            }
+
         }
 
         // Log the current state of the array
