@@ -41,6 +41,12 @@ class MainActivity : AppCompatActivity() {
             startActivity(Intent(this, TabbedConvoActivity::class.java))
         }
 
+        // Sets up the third main menu item's button (viewing conversation history)
+        val viewConvoFab = findViewById<FloatingActionButton>(R.id.fab_mainFragment_viewConversations)
+        viewConvoFab.setOnClickListener {
+            startActivity(Intent(this, ViewConvoActivity::class.java))
+        }
+
         // Initialize application
         start()
     }
