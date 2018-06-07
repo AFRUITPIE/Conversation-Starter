@@ -113,6 +113,8 @@ class TabbedConvoActivity : AppCompatActivity() {
     // Updates the preference value of the conversation at key
     private fun setConversations(key: String, conversations: Array<String>) {
         prefs?.edit()?.putString(key, Gson().toJson(conversations))?.apply()
+        appInstance.repository.setLocalStarters(Gson().toJson(conversations))
+        appInstance.repository.saveLocalDataToStorage(this)
     }
 
     private fun setListViewToDelete() {
