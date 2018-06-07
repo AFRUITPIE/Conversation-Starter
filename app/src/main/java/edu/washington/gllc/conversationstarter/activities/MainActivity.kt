@@ -234,6 +234,8 @@ class MainActivity : AppCompatActivity() {
         // Get local starters from storage
         appInstance.repository.expandLocalDataFromStorage(this)
         appInstance.repository.expandLogDataFromStorage(this)
+        appInstance.repository.expandRepoDataFromStorage(this)
+        appInstance.repository.expandEvilRepoDataFromStorage(this)
     }
 
     /**
@@ -295,8 +297,10 @@ class MainActivity : AppCompatActivity() {
             "convo_online" -> {
                 if (prefs!!.getBoolean("evil_mode", false)) {
                     appInstance.repository.setEvilRepoStarters(convoJson)
+                    appInstance.repository.saveEvilRepoDataToStorage(this)
                 } else {
                     appInstance.repository.setRepoStarters(convoJson)
+                    appInstance.repository.saveRepoDataToStorage(this)
                 }
             }
         }
