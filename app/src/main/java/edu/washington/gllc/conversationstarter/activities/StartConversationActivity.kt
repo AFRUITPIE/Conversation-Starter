@@ -20,6 +20,7 @@ import android.widget.TextView
 import android.widget.Toast
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import edu.washington.gllc.conversationstarter.ConversationStarterApp
 import edu.washington.gllc.conversationstarter.classes.ConversationStarterData
 import java.lang.reflect.Type
 import java.time.LocalDateTime
@@ -34,6 +35,8 @@ class StartConversationActivity : AppCompatActivity() {
     private var contactPhoneNum: String? = null
     private var msgContents: String? = null
     private var timestamp: String? = null
+    private var appInstance = ConversationStarterApp.getSingletonInstance()
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -49,9 +52,10 @@ class StartConversationActivity : AppCompatActivity() {
         fab.hide()
 
         // Get conversation starters
-        val convoStarters = prefs!!.getString("convo_array", "default")
-        Log.i(TAG, convoStarters)
-        convoStartersArray = Gson().fromJson(convoStarters, Array<String>::class.java)
+//        val convoStarters = prefs!!.getString("convo_array", "default")
+//        Log.i(TAG, convoStarters)
+//        convoStartersArray = Gson().fromJson(convoStarters, Array<String>::class.java)
+        convoStartersArray = appInstance.repository.getAllStarters()
 
         // Set up floating action button message
         fab.setOnClickListener { view ->
