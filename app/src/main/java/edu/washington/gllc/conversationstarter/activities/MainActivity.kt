@@ -20,21 +20,40 @@ class MainActivity : AppCompatActivity() {
     private var prefs: SharedPreferences? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        // Set up
         super.onCreate(savedInstanceState)
-
         setContentView(R.layout.activity_main)
         setSupportActionBar(findViewById(R.id.toolbar))
         prefs = PreferenceManager.getDefaultSharedPreferences(this)
-        findViewById<FloatingActionButton>(R.id.fab_mainFragment_editConversationStarters).setOnClickListener { startActivity(Intent(this, TabbedConvoActivity::class.java)) }
         // Sets up the first menu item's (starting a conversation's) button
         val initConvoFab = findViewById<FloatingActionButton>(R.id.fab_mainFragment_startConversation)
         initConvoFab.setOnClickListener {
-//            Toast.makeText(this, "click", Toast.LENGTH_SHORT).show()
             val intent = Intent(this, StartConversationActivity::class.java)
-
             startActivity(intent)
         }
 
+        // Sets up the second main menu item's button (editing conversation starters)
+        findViewById<FloatingActionButton>(R.id.fab_mainFragment_editConversationStarters).setOnClickListener { startActivity(Intent(this, TabbedConvoActivity::class.java)) }
+        // val editConvoStartersFab = findViewById<FloatingActionButton>(R.id.fab_mainFragment_editConversationStarters)
+        // editConvoStartersFab.setOnClickListener {
+        //     val intent = Intent(this, EditConvoActivity::class.java)
+        //     if (prefs?.getString("convo_repo", "") != "") {
+        //         // Snackbar to warn user of online repo being set,
+        //         // also allows for clearing of the online repo
+        //         val mySnackbar = Snackbar.make(findViewById<View>(R.id.activity_main_coordinator),
+        //                 R.string.snackbar_repo, Snackbar.LENGTH_LONG)
+        //         mySnackbar.setAction(R.string.snackbar_action, {
+        //             prefs?.edit()?.putString("convo_repo", "")?.apply()
+        //             resetConversations()
+        //             startActivity(intent)
+        //         })
+        //         mySnackbar.show()
+        //     } else {
+        //         startActivity(intent)
+        //     }
+        // }
+
+        // Initialize application
         start()
     }
 
