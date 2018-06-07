@@ -1,8 +1,16 @@
 package edu.washington.gllc.conversationstarter.classes
 
+import android.content.Context
+import android.os.Environment
+import android.util.Log
+import android.widget.Toast
 import com.google.gson.Gson
+import edu.washington.gllc.conversationstarter.ConversationStarterApp
+import java.io.File
+import java.io.FileWriter
 
 class ConversationStarterRepo {
+//    private var appInstance = ConversationStarterApp.getSingletonInstance()
     private var _localStarters = mutableListOf<String>()
     private var _repoStarters = mutableListOf<String>()
     private var _evilRepoStarters = mutableListOf<String>()
@@ -14,7 +22,8 @@ class ConversationStarterRepo {
             "The mitochondria is the powerhouse of the cell",
             "Android development is pretty cool",
             "Want to get coffee tomorrow?",
-            "This is from the PLACEHOLDERS!")
+            "This is from the PLACEHOLDERS!"
+    )
     private var _bakedInEvilStarters = listOf<String>("We need to talk.",
             "Hey, my parents aren't home ;)",
             "I hate you",
@@ -103,6 +112,36 @@ class ConversationStarterRepo {
 
     public fun getAllStarters(): Array<String> {
         return (_bakedInStarters + _repoStarters + _localStarters).toTypedArray()
+    }
+
+    public fun saveLocalDataToStorage(context: Context) {
+        try {
+            val intStorageFile = File(context.applicationContext.filesDir, "cs_local")
+            if (intStorageFile.exists()) {
+                intStorageFile.delete()
+            }
+            val stringToSave = getLocalStartersAsJson()
+            intStorageFile.createNewFile()
+            intStorageFile.writeText(stringToSave)
+        }
+        catch(e: Exception) {
+            Log.e(TAG, e.toString())
+        }
+    }
+
+    public fun expandLocalDataFromStorage(context: Context) {
+        try {
+            val intStorageFile = File(context.applicationContext.filesDir, "cs_local")
+            if (!intStorageFile.exists()) {
+                _localStarters = mutableListOf<String>()
+            } else {
+                val stringFromStorage = intStorageFile.readText()
+                setLocalStarters(stringFromStorage)
+            }
+        }
+        catch(e: Exception) {
+            Log.e(TAG, e.toString())
+        }
     }
 
     companion object {
