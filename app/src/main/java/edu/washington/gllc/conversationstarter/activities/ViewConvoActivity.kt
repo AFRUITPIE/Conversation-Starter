@@ -57,15 +57,16 @@ class ViewConvoActivity : AppCompatActivity() {
         setContentView(R.layout.activity_view_convo)
 
         prefs = PreferenceManager.getDefaultSharedPreferences(this)
-        val listView: ListView = findViewById(R.id.list_convo_edit)
+        val listView: ListView = findViewById(R.id.list_view_convo)
+        /*
         val JSONMessageList = getMessages()
-
         val adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, getMessages())
         listView.adapter = adapter
 
         listView.setOnItemClickListener { parent, view, position, id ->
 
         }
+        */
     }
 
     private fun getMessages(): List<String> {
@@ -74,7 +75,7 @@ class ViewConvoActivity : AppCompatActivity() {
         var i = 0
         while (defValue != "done") {
             val msg = prefs?.getString("msg" + i, "done")
-            val jsonMsg = JSONObject(msg)
+            val jsonMsg = JSONObject(msg) // need to parse from string to jsonobject
             JSONMessagesList?.add(jsonMsg)
             i++
         }
