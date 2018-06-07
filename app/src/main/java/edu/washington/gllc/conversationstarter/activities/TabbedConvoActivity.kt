@@ -7,8 +7,6 @@ import android.preference.PreferenceManager
 import android.support.design.widget.BottomNavigationView
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
-import android.util.Log
-import android.view.MenuItem
 import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.EditText
@@ -17,6 +15,7 @@ import com.google.gson.Gson
 import edu.washington.gllc.conversationstarter.ConversationStarterApp
 import edu.washington.gllc.conversationstarter.R
 import kotlinx.android.synthetic.main.activity_tabbed_convo.*
+
 
 class TabbedConvoActivity : AppCompatActivity() {
     private var prefs: SharedPreferences? = null
@@ -77,8 +76,10 @@ class TabbedConvoActivity : AppCompatActivity() {
                 setConversations("convo_local", Gson().fromJson(prefs?.getString("convo_local", "[]"), Array<String>::class.java)
                         + (dialog as AlertDialog).findViewById<EditText>(R.id.txt_add_convo)?.text.toString())
                 appInstance.repository.addLocalStarter((dialog).findViewById<EditText>(R.id.txt_add_convo)?.text.toString())
+                appInstance.repository.saveLocalDataToStorage(this)
                 // Reset listView adapter to reflect the new changes
                 setListAdapter("convo_local")
+
             })
 
             // Blank cancel button
@@ -116,6 +117,8 @@ class TabbedConvoActivity : AppCompatActivity() {
     // Updates the preference value of the conversation at key
     private fun setConversations(key: String, conversations: Array<String>) {
         prefs?.edit()?.putString(key, Gson().toJson(conversations))?.apply()
+        appInstance.repository.setLocalStarters(Gson().toJson(conversations))
+        appInstance.repository.saveLocalDataToStorage(this)
     }
 
     private fun setListViewToDelete() {

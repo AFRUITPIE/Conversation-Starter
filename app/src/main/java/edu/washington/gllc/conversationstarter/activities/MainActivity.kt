@@ -18,6 +18,7 @@ import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import com.android.volley.Request
@@ -45,15 +46,21 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(findViewById(R.id.toolbar))
+
+        // Check permissions
+        checkPermissions()
+
         // Sets up the first menu item's (starting a conversation's) button
         val initConvoFab = findViewById<FloatingActionButton>(R.id.fab_mainFragment_startConversation)
         initConvoFab.setOnClickListener {
             val intent = Intent(this, StartConversationActivity::class.java)
             startActivity(intent)
         }
-
-        // Check permissions
-        checkPermissions()
+        val initConvoLL = findViewById<LinearLayout>(R.id.linearLayout_mainFragment_startConversation)
+        initConvoLL.setOnClickListener {
+            val intent = Intent(this, StartConversationActivity::class.java)
+            startActivity(intent)
+        }
 
         // Sets up the second main menu item's button (editing conversation starters)
         findViewById<FloatingActionButton>(R.id.fab_mainFragment_editConversationStarters)
@@ -61,10 +68,18 @@ class MainActivity : AppCompatActivity() {
         editConvoStartersFab.setOnClickListener {
             startActivity(Intent(this, TabbedConvoActivity::class.java))
         }
+        val editConvStartersLL = findViewById<LinearLayout>(R.id.linearLayout_mainFragment_editConversationStarters)
+        editConvStartersLL.setOnClickListener {
+            startActivity(Intent(this, TabbedConvoActivity::class.java))
+        }
 
         // Sets up the third main menu item's button (viewing conversation history)
         val viewConvoFab = findViewById<FloatingActionButton>(R.id.fab_mainFragment_viewConversations)
         viewConvoFab.setOnClickListener {
+            startActivity(Intent(this, ViewConvoActivity::class.java))
+        }
+        val viewConvoLL = findViewById<LinearLayout>(R.id.linearLayout_mainFragment_viewConversations)
+        viewConvoLL.setOnClickListener {
             startActivity(Intent(this, ViewConvoActivity::class.java))
         }
 
@@ -76,12 +91,6 @@ class MainActivity : AppCompatActivity() {
 
         // Initialize application
         start()
-
-        // Return to settings upon evil mode toggle
-        if ( intent.hasExtra("source") ) {
-
-            //startActivity(Intent(this, SettingsActivity::class.java))
-        }
     }
 
     override fun onPause() {
@@ -221,6 +230,10 @@ class MainActivity : AppCompatActivity() {
 
         // Log the current state of the array
         Log.i(localClassName, "Current conversation array is: ${prefs?.getString("convo_log", "ERROR LOADING ARRAY")}")
+
+        // Get local starters from storage
+        appInstance.repository.expandLocalDataFromStorage(this)
+        appInstance.repository.expandLogDataFromStorage(this)
     }
 
     /**

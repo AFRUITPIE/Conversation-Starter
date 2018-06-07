@@ -23,12 +23,20 @@ class RepoRefreshAlarmReceiver : BroadcastReceiver() {
         // Request a string response from the provided URL.
         val stringRequest = StringRequest(Request.Method.GET, url,
                 Response.Listener<String> { response ->
-                    if (prefs!!.getBoolean("evil_mode", false)) {
-                        appInstance.repository.setEvilRepoStarters(response)
-                        Log.i("AlarmReceiver", "Refreshed the evil repo")
+                    // Resolves odd error where response would sometimes be null from Firebase
+                    if (response != "null") {
+                        if (prefs!!.getBoolean("evil_mode", false)) {
+                            appInstance.repository.setEvilRepoStarters(response)
+                            Log.i("AlarmReceiver", "Refreshed the evil repo")
+                            Toast.makeText(context, "Updated evil repository", Toast.LENGTH_SHORT).show()
+                        } else {
+                            appInstance.repository.setRepoStarters(response)
+                            Log.i("AlarmReceiver", "Refreshed the normal repo")
+                            Toast.makeText(context, "Udpated normal repository", Toast.LENGTH_SHORT).show()
+                        }
                     } else {
-                        appInstance.repository.setRepoStarters(response)
-                        Log.i("AlarmReceiver", "Refreshed the normal repo")
+                        Log.i("AlarmReceiver", "JSON returned null")
+                        Toast.makeText(context, "Online JSON was null, Firebase does this sometimes", Toast.LENGTH_SHORT).show()
                     }
                 },
                 Response.ErrorListener {

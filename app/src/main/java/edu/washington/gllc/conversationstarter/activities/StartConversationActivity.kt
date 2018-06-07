@@ -57,112 +57,124 @@ class StartConversationActivity : AppCompatActivity() {
         fab.hide()
 
         // Get conversation starters
-//        val convoStarters = prefs!!.getString("convo_array", "default")
-//        Log.i(TAG, convoStarters)
-//        convoStartersArray = Gson().fromJson(convoStarters, Array<String>::class.java)
         convoStartersArray = if (prefs!!.getBoolean("evil_mode", false)) {
             appInstance.repository.getAllEvilModeStarters()
         } else {
-            appInstance.repository.getAllStarters()
+            if (prefs!!.getBoolean("ignore_prebaked", false)) {
+                (appInstance.repository.getRepoStarters() + appInstance.repository.getLocalStarters())
+            } else {
+                appInstance.repository.getAllStarters()
+            }
         }
 
         // Set up floating action button message
         fab.setOnClickListener { view ->
+            Log.i(TAG, Gson().toJson(appInstance.repository.getLocalStarters()))
             // Show the "Message Sent!" snackbar
 //            Snackbar.make(view, "Message sent!", Snackbar.LENGTH_LONG)
 //                    .setAction("Action", null).show()
             // Set the .random() function on a range
             fun ClosedRange<Int>.random() =
-                    Random().nextInt(endInclusive - 1) + start
+                    Random().nextInt(endInclusive - start) + start
             // Get a random conversation starter from the saved array
-            var convoStartersArrayLength = convoStartersArray?.size
-            if (convoStartersArrayLength == null) {
-                convoStartersArrayLength = 0
-            }
-            val randomMsgIndex = (0..(convoStartersArrayLength - 1)).random()
-            val randomMsg = convoStartersArray?.get(randomMsgIndex)
-            msgContents = randomMsg
+            val convoStartersArrayLength = convoStartersArray?.size
+            if (convoStartersArrayLength == null || convoStartersArrayLength == 0) {
+                Toast.makeText(this,
+                        "Uh-oh! It looks like you don't have any conversation starters! Go back to the main menu and add some starters, or enable the built-in starters.",
+                        Toast.LENGTH_LONG)
+                        .show()
+            } else {
+                msgContents = if (convoStartersArrayLength == 1) {
+                    convoStartersArray?.get(0)
+                } else {
+                    val randomMsgIndex = (0..(convoStartersArrayLength)).random()
+                    Log.i(TAG, randomMsgIndex.toString())
+                    val randomMsg = convoStartersArray?.get(randomMsgIndex)
+                    randomMsg
+                }
 
-            // If evil mode is off, send normally.
-            // If evil mode is on, send it to a random contact 50% of the time
-            if (prefs!!.getBoolean("evil_mode", false) && Random().nextBoolean()) {
-                Log.i(localClassName, "Sending a message to the wrong contact")
-                //  Get a random phone number from sent messages in the scariest way possible
-                val uri = Uri.parse("content://sms")
-                val cursor = this.contentResolver.query(uri, null, null, null, null)
-                val randomIndex = Random().nextInt(cursor.count)
-                if (cursor.moveToFirst()) {
-                    for (i in 0..cursor.count) {
-                        val phoneNumber = cursor.getString(cursor.getColumnIndexOrThrow("address")).toString()
-                        if (i == randomIndex) {
-                            smsManager.sendTextMessage(
-                                    phoneNumber,
-                                    null,
-                                    msgContents,
-                                    null,
-                                    null
-                            )
+                // If evil mode is off, send normally.
+                // If evil mode is on, send it to a random contact 50% of the time
+                if (prefs!!.getBoolean("evil_mode", false) && Random().nextBoolean()) {
+                    Log.i(localClassName, "Sending a message to the wrong contact")
+                    //  Get a random phone number from sent messages in the scariest way possible
+                    val uri = Uri.parse("content://sms")
+                    val cursor = this.contentResolver.query(uri, null, null, null, null)
+                    val randomIndex = Random().nextInt(cursor.count)
+                    if (cursor.moveToFirst()) {
+                        for (i in 0..cursor.count) {
+                            val phoneNumber = cursor.getString(cursor.getColumnIndexOrThrow("address")).toString()
+                            if (i == randomIndex) {
+                                smsManager.sendTextMessage(
+                                        phoneNumber,
+                                        null,
+                                        msgContents,
+                                        null,
+                                        null
+                                )
+                            }
                         }
                     }
-                }
-            } else {
-                // Send the random message to the chosen contact
-                Log.i(localClassName, "Sending a message to the correct contact")
-                smsManager.sendTextMessage(
-                        contactPhoneNum,
-                        null,
-                        msgContents,
-                        null,
-                        null
-                )
-            }
-
-            Toast.makeText(this, "Conversation started with $contactDisplayName. Message: \"$msgContents\"", Toast.LENGTH_SHORT).show()
-
-            // If using Evil Mode, if recipient does not respond in 5 seconds, another text is sent.
-            if (prefs!!.getBoolean("evil_mode", false)){
-                if(Random().nextInt(10) == 4)
-                Handler().postDelayed({
+                } else {
+                    // Send the random message to the chosen contact
+                    Log.i(localClassName, "Sending a message to the correct contact")
                     smsManager.sendTextMessage(
                             contactPhoneNum,
                             null,
-                            "Answer me pls",
+                            msgContents,
                             null,
                             null
                     )
-                    Toast.makeText(this, "Conversation restarted with $contactDisplayName. Message: \"$msgContents\"", Toast.LENGTH_SHORT).show()
-
-                }, 1000 * 15 * 60)
-            }
-
-            // Save the message to data class
-            timestamp = Calendar.getInstance().time.toString()
-            val newLogEntry = ConversationStarterData(contactDisplayName as String, contactPhoneNum as String, msgContents as String, timestamp as String)
-            Log.i(TAG, newLogEntry.toString())
-            // Get existing log from SharedPrefs
-            if (!prefs!!.contains("convo_log")) {
-                with(prefs!!.edit()) {
-                    putString("convo_log", "[]")
-                    commit()
                 }
-            }
 
-            // Add the new log entry and save it to sharedprefs
-            var convoLogSerialized = prefs!!.getString("convo_log", "default")
-            val collectionType: Type = object : TypeToken<Collection<ConversationStarterData>>() { }.type
-            val convoLogList: MutableList<ConversationStarterData> = Gson().fromJson(convoLogSerialized, collectionType)
-            convoLogList.add(newLogEntry)
-            val newConvoLogArray = convoLogList.toTypedArray()
-            convoLogSerialized = Gson().toJson(newConvoLogArray)
-            Log.i(TAG, convoLogSerialized)
-            with(prefs!!.edit()) {
-                putString("convo_log", convoLogSerialized)
-                commit()
-            }
+                Toast.makeText(this, "Conversation started with $contactDisplayName. Message: \"$msgContents\"", Toast.LENGTH_SHORT).show()
 
-            // Return to main activity
-            val intent = Intent(this, MainActivity::class.java)
-            startActivity(intent)
+                // If using Evil Mode, if recipient does not respond in 5 seconds, another text is sent.
+                if (prefs!!.getBoolean("evil_mode", false)){
+                    if(Random().nextInt(10) == 4)
+                    Handler().postDelayed({
+                        smsManager.sendTextMessage(
+                                contactPhoneNum,
+                                null,
+                                "Answer me pls",
+                                null,
+                                null
+                        )
+                        Toast.makeText(this, "Conversation restarted with $contactDisplayName. Message: \"$msgContents\"", Toast.LENGTH_SHORT).show()
+
+                    }, 1000 * 15 * 60)
+                }
+
+                // Save the message to data class
+                timestamp = Calendar.getInstance().time.toString()
+                val newLogEntry = ConversationStarterData(contactDisplayName as String, contactPhoneNum as String, msgContents as String, timestamp as String)
+                Log.i(TAG, newLogEntry.toString())
+                // Get existing log from SharedPrefs
+//                if (!prefs!!.contains("convo_log")) {
+//                    with(prefs!!.edit()) {
+//                        putString("convo_log", "[]")
+//                        commit()
+//                    }
+//                }
+
+                // Add the new log entry and save it to sharedprefs
+//                var convoLogSerialized = prefs!!.getString("convo_log", "default")
+//                val collectionType: Type = object : TypeToken<Collection<ConversationStarterData>>() { }.type
+//                val convoLogList: MutableList<ConversationStarterData> = Gson().fromJson(convoLogSerialized, collectionType)
+//                convoLogList.add(newLogEntry)
+//                val newConvoLogArray = convoLogList.toTypedArray()
+//                convoLogSerialized = Gson().toJson(newConvoLogArray)
+//                Log.i(TAG, convoLogSerialized)
+//                with(prefs!!.edit()) {
+//                    putString("convo_log", convoLogSerialized)
+//                    commit()
+//                }
+                appInstance.repository.addToLog(this, newLogEntry)
+
+                // Return to main activity
+                val intent = Intent(this, MainActivity::class.java)
+                startActivity(intent)
+            }
         }
 
         // Start an intent to choose a contact via the device's default phone/contacts app
