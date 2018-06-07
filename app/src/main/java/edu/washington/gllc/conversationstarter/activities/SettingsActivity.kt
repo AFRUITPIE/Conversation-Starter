@@ -170,7 +170,7 @@ class SettingsActivity : AppCompatPreferenceActivity() {
 
             } else if (preference.key == "refresh_time" || preference.key == "refresh_time_evil") {
                 preference.summary = "${Integer.parseInt(stringValue) + 1} minutes"
-            } else if (preference.key == "convo_repo" && value == "null") {
+            } else if (preference.key == "convo_repo" || value == "null") {
                 preference.summary = "No repository set"
             } else {
                 // For all other preferences, set the summary to the value's
