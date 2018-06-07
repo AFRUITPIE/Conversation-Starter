@@ -251,6 +251,8 @@ class MainActivity : AppCompatActivity() {
                     if (response != "null") {
                         handleConvoJson("convo_online", response)
                         Log.i(localClassName, "Set new normal conversation successfully")
+                        Toast.makeText(this, "Refreshed online repository", Toast.LENGTH_SHORT).show()
+
                     } else {
                         Log.e(localClassName, "Volley returned null")
                         Toast.makeText(this, "JSON returned was null, possibly a broken URL", Toast.LENGTH_SHORT).show()
