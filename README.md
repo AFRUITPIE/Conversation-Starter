@@ -8,8 +8,9 @@ For those particularly daring (or stupid) users, Conversation Starter also has a
 
 For more information, see here: https://drive.google.com/a/uw.edu/file/d/1n85aVTwm9mt0rQ2dTFSuHmjJyvnvd1WJ/view?usp=sharing
 
-## Contributers:
+## Contributors:
  * Iean Drew (ieand@uw.edu)
  * Hayden Hong (hello@haydenhong.com)
  * Jake George (jcg25@uw.edu)
  * McKaulay Kolakowski (mckaulay@uw.edu)
+ * Aaron Oh (aaronioh@uw.edu)
