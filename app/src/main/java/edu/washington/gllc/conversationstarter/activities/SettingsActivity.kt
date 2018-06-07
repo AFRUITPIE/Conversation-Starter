@@ -10,6 +10,12 @@ import android.preference.*
 import android.util.Log
 import android.view.MenuItem
 import edu.washington.gllc.conversationstarter.R
+import android.content.SharedPreferences
+import android.support.v4.content.ContextCompat.startActivity
+
+
+
+
 
 /**
  * A [PreferenceActivity] that presents a set of application settings. On
@@ -24,7 +30,28 @@ import edu.washington.gllc.conversationstarter.R
 class SettingsActivity : AppCompatPreferenceActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        val prefs = PreferenceManager.getDefaultSharedPreferences(this)
+        var isEvil = prefs!!.getBoolean("evil_mode", false)
+        if (isEvil) {
+            setTheme(R.style.DarkAppTheme)
+        }
+
         super.onCreate(savedInstanceState)
+        val prefListener: SharedPreferences.OnSharedPreferenceChangeListener
+
+        //listener on changed preference:
+        prefListener = SharedPreferences.OnSharedPreferenceChangeListener { prefs, key ->
+            Log.i("SettingsActivity", "Settings key changed: $key")
+            if (key == "evil_mode") {
+                Log.i("SettingsActivity", "Evil mode toggled")
+                val intent = Intent(this, MainActivity::class.java)
+                        .putExtra("source","prefs")
+                //intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+                startActivity(intent)
+                finish()
+            }
+        }
+        prefs.registerOnSharedPreferenceChangeListener(prefListener)
         setupActionBar()
     }
 

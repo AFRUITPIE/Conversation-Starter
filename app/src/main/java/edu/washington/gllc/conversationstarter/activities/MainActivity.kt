@@ -37,10 +37,15 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         // Set up
+        prefs = PreferenceManager.getDefaultSharedPreferences(this)
+        var isEvil = prefs!!.getBoolean("evil_mode", false)
+        if (isEvil) {
+            setTheme(R.style.DarkAppTheme)
+        }
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(findViewById(R.id.toolbar))
-        prefs = PreferenceManager.getDefaultSharedPreferences(this)
 
         // Check permissions
         checkPermissions()
