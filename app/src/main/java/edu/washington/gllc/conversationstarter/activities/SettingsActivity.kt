@@ -3,6 +3,7 @@ package edu.washington.gllc.conversationstarter.activities
 import android.annotation.TargetApi
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
@@ -10,11 +11,6 @@ import android.preference.*
 import android.util.Log
 import android.view.MenuItem
 import edu.washington.gllc.conversationstarter.R
-import android.content.SharedPreferences
-import android.support.v4.content.ContextCompat.startActivity
-
-
-
 
 
 /**
@@ -135,6 +131,7 @@ class SettingsActivity : AppCompatPreferenceActivity() {
             // to their values. When their values change, their summaries are
             // updated to reflect the new value, per the Android Design
             // guidelines.
+            bindPreferenceSummaryToValue(findPreference("convo_repo_evil"))
             bindPreferenceSummaryToValue(findPreference("refresh_time_evil"))
         }
 
