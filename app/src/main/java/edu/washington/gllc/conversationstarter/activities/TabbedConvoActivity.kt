@@ -72,6 +72,7 @@ class TabbedConvoActivity : AppCompatActivity() {
                 setConversations("convo_local", Gson().fromJson(prefs?.getString("convo_local", "[]"), Array<String>::class.java)
                         + (dialog as AlertDialog).findViewById<EditText>(R.id.txt_add_convo)?.text.toString())
                 appInstance.repository.addLocalStarter((dialog).findViewById<EditText>(R.id.txt_add_convo)?.text.toString())
+                appInstance.repository.saveLocalDataToStorage(this)
                 // Reset listView adapter to reflect the new changes
                 setListAdapter("convo_local")
 

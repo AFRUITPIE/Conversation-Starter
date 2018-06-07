@@ -210,6 +210,9 @@ class MainActivity : AppCompatActivity() {
 
         // Log the current state of the array
         Log.i(localClassName, "Current conversation array is: ${prefs?.getString("convo_log", "ERROR LOADING ARRAY")}")
+
+        // Get local starters from storage
+        appInstance.repository.expandLocalDataFromStorage(this)
     }
 
     /**
