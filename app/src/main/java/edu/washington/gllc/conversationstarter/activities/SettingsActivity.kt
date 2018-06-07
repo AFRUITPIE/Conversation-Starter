@@ -44,8 +44,9 @@ class SettingsActivity : AppCompatPreferenceActivity() {
             Log.i("SettingsActivity", "Settings key changed: $key")
             if (key == "evil_mode") {
                 Log.i("SettingsActivity", "Evil mode toggled")
-                val intent = intent
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+                val intent = Intent(this, MainActivity::class.java)
+                        .putExtra("source","prefs")
+                //intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
                 startActivity(intent)
                 finish()
             }

@@ -76,6 +76,12 @@ class MainActivity : AppCompatActivity() {
 
         // Initialize application
         start()
+
+        // Return to settings upon evil mode toggle
+        if ( this.intent.extras.containsKey("source") ) {
+
+            startActivity(Intent(this, SettingsActivity::class.java))
+        }
     }
 
     override fun onPause() {
