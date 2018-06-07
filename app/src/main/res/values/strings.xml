@@ -4,6 +4,8 @@
     <string name="title_activity_settings">Settings</string>
     <string name="title_activity_start_conversation">Start a Conversation!</string>
     <string name="title_activity_edit_convo">Your Conversation Starters</string>
+    <string name="title_activity_tabbed_convo">Your Conversation Starters</string>
+
 
     <!-- Strings related to Settings (SettingsActivity) -->
     <string name="action_settings">Settings</string>
@@ -29,6 +31,7 @@
     <!-- Strings related to the main menu (MainActivity) -->
     <string name="text_mainFragment_startConversation">Start a conversation with someone!</string>
     <string name="text_mainFragment_editConversationStarters">View or edit your conversation starters!</string>
+    <string name="text_mainFragment_viewEvilConversationStarters">View your conversation starters.</string>
     <string name="text_mainFragment_viewConversations">View your recently started conversations.</string>
 
     <!-- Strings related to starting a conversation (StartConversationActivity) -->
@@ -37,7 +40,6 @@
     <string name="text_startConversationFragment_contactName">Not yet chosen…</string>
     <string name="text_startConversationFragment_contactPhoneNumLabel">Phone Number:</string>
     <string name="text_startConversationFragment_contactPhoneNum">Not yet chosen…</string>
-    <string name="title_activity_tabbed_convo">TabbedConvoActivity</string>
     <string name="tab_tabbedConvoActivity_local">Local</string>
     <string name="tab_tabbedConvoActivity_online">Online</string>
     <string name="tab_tabbedConvoActivity_included">Built-In</string>
