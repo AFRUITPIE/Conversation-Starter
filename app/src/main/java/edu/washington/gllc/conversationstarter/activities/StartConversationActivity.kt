@@ -64,12 +64,13 @@ class StartConversationActivity : AppCompatActivity() {
 
         // Set up floating action button message
         fab.setOnClickListener { view ->
+            Log.i(TAG, Gson().toJson(appInstance.repository.getLocalStarters()))
             // Show the "Message Sent!" snackbar
 //            Snackbar.make(view, "Message sent!", Snackbar.LENGTH_LONG)
 //                    .setAction("Action", null).show()
             // Set the .random() function on a range
             fun ClosedRange<Int>.random() =
-                    Random().nextInt(endInclusive - 1) + start
+                    Random().nextInt(endInclusive - start) + start
             // Get a random conversation starter from the saved array
             val convoStartersArrayLength = convoStartersArray?.size
             if (convoStartersArrayLength == null || convoStartersArrayLength == 0) {
@@ -82,6 +83,7 @@ class StartConversationActivity : AppCompatActivity() {
                     convoStartersArray?.get(0)
                 } else {
                     val randomMsgIndex = (0..(convoStartersArrayLength)).random()
+                    Log.i(TAG, randomMsgIndex.toString())
                     val randomMsg = convoStartersArray?.get(randomMsgIndex)
                     randomMsg
                 }

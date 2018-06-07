@@ -60,6 +60,20 @@ class ConversationStarterRepo {
         return _localStarters.toTypedArray()
     }
 
+    public fun removeLocalStarter(starterToRemove: String, context: Context): Boolean {
+        return try {
+            _localStarters.remove(starterToRemove)
+            saveLocalDataToStorage(context)
+
+            true
+        }
+        catch(e: Exception) {
+            Log.i(TAG, e.toString())
+
+            false
+        }
+    }
+
     public fun getRepoStarters() : Array<String> {
         return _repoStarters.toTypedArray()
     }
