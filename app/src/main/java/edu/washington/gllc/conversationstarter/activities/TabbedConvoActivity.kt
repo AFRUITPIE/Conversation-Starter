@@ -11,11 +11,14 @@ import android.widget.ArrayAdapter
 import android.widget.EditText
 import android.widget.ListView
 import com.google.gson.Gson
+import edu.washington.gllc.conversationstarter.ConversationStarterApp
 import edu.washington.gllc.conversationstarter.R
 import kotlinx.android.synthetic.main.activity_tabbed_convo.*
 
 class TabbedConvoActivity : AppCompatActivity() {
     private var prefs: SharedPreferences? = null
+    private var appInstance = ConversationStarterApp.getSingletonInstance()
+
 
     private val mOnNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
         when (item.itemId) {
@@ -57,6 +60,7 @@ class TabbedConvoActivity : AppCompatActivity() {
                 // Add the new string
                 setConversations("convo_local", Gson().fromJson(prefs?.getString("convo_local", "[]"), Array<String>::class.java)
                         + (dialog as AlertDialog).findViewById<EditText>(R.id.txt_add_convo)?.text.toString())
+                appInstance.repository.addLocalStarter((dialog).findViewById<EditText>(R.id.txt_add_convo)?.text.toString())
                 // Reset listView adapter to reflect the new changes
                 setListAdapter("convo_local")
             })
@@ -72,7 +76,10 @@ class TabbedConvoActivity : AppCompatActivity() {
 
     // Sets the adapter of the list to whatever the string key value is
     private fun setListAdapter(key: String) {
-        val conversations = Gson().fromJson(prefs?.getString(key, "[]"), Array<String>::class.java)
+        var conversations = Gson().fromJson(prefs?.getString(key, "[]"), Array<String>::class.java)
+        if (key == "convo_included") {
+            conversations = appInstance.repository.getBakedInStarters()
+        }
         if (key == "convo_local") {
             setListViewToDelete()
         } else {

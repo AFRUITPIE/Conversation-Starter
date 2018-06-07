@@ -60,7 +60,7 @@ class MainActivity : AppCompatActivity() {
     private fun start() {
         prefs = PreferenceManager.getDefaultSharedPreferences(this)
         // Ensures there are some garbage placeholders
-        handleConvoJson("convo_included", "[\"Hello\", \"Hey, long time no see! What's up?\", \"Lol what's up kiddo\", \"Hey what's up?\", \"You want to go get dinner or something soon?\", \"The mitochondria is the powerhouse of the cell\", \"Android development is pretty cool\", \"Want to get coffee tomorrow?\", \"This is from the PLACEHOLDERS!\"]")
+//        handleConvoJson("convo_included", "[\"Hello\", \"Hey, long time no see! What's up?\", \"Lol what's up kiddo\", \"Hey what's up?\", \"You want to go get dinner or something soon?\", \"The mitochondria is the powerhouse of the cell\", \"Android development is pretty cool\", \"Want to get coffee tomorrow?\", \"This is from the PLACEHOLDERS!\"]")
 
         // Load online repo if one is set
         if (prefs?.getString("convo_repo", "") != "") {
@@ -92,16 +92,42 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
+     * Parses conversations from an Array<String>
+     * @param key key of the starter repo you want to add to
+     * @param convoArray Array<String> of conversation starters
+     */
+//    private fun handleConvoArray(key: String, convoArray: Array<String>) {
+//        when(key) {
+//            "convo_local" -> {
+//                appInstance.repository.setLocalStarters(convoArray)
+//            }
+//        }
+//        prefs?.edit()?.putString(key, convoJson)?.apply() // Override with new conversations from internet
+//        // Re-compile all three conversation sources
+//        var allConvos: Array<String> = Gson().fromJson(prefs?.getString("convo_local", "[]"), Array<String>::class.java) +
+//                Gson().fromJson(prefs?.getString("convo_online", "[]"), Array<String>::class.java) +
+//                Gson().fromJson(prefs?.getString("convo_included", "[]"), Array<String>::class.java)
+//        // Override the master list with conversations
+//        prefs?.edit()?.putString("convo_array", Gson().toJson(allConvos))?.apply()
+//    }
+
+    /**
      * Parses conversations from a JSON string
      * @param key key of the conversation you want to add to
      * @param convoJson string version of the conversation (FROM JSON)
      */
     private fun handleConvoJson(key: String, convoJson: String) {
+        // Update the repo
+        when(key) {
+            "convo_local" -> appInstance.repository.setLocalStarters(convoJson)
+            "convo_online" -> appInstance.repository.setRepoStarters(convoJson)
+        }
         prefs?.edit()?.putString(key, convoJson)?.apply() // Override with new conversations from internet
         // Re-compile all three conversation sources
-        var allConvos: Array<String> = Gson().fromJson(prefs?.getString("convo_local", "[]"), Array<String>::class.java) +
-                Gson().fromJson(prefs?.getString("convo_online", "[]"), Array<String>::class.java) +
-                Gson().fromJson(prefs?.getString("convo_included", "[]"), Array<String>::class.java)
+        var allConvos: Array<String> = appInstance.repository.getAllStarters()
+//                Gson().fromJson(prefs?.getString("convo_local", "[]"), Array<String>::class.java) +
+//                Gson().fromJson(prefs?.getString("convo_online", "[]"), Array<String>::class.java) +
+//                Gson().fromJson(prefs?.getString("convo_included", "[]"), Array<String>::class.java)
         // Override the master list with conversations
         prefs?.edit()?.putString("convo_array", Gson().toJson(allConvos))?.apply()
     }
