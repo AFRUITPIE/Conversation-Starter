@@ -145,25 +145,26 @@ class StartConversationActivity : AppCompatActivity() {
                 val newLogEntry = ConversationStarterData(contactDisplayName as String, contactPhoneNum as String, msgContents as String, timestamp as String)
                 Log.i(TAG, newLogEntry.toString())
                 // Get existing log from SharedPrefs
-                if (!prefs!!.contains("convo_log")) {
-                    with(prefs!!.edit()) {
-                        putString("convo_log", "[]")
-                        commit()
-                    }
-                }
+//                if (!prefs!!.contains("convo_log")) {
+//                    with(prefs!!.edit()) {
+//                        putString("convo_log", "[]")
+//                        commit()
+//                    }
+//                }
 
                 // Add the new log entry and save it to sharedprefs
-                var convoLogSerialized = prefs!!.getString("convo_log", "default")
-                val collectionType: Type = object : TypeToken<Collection<ConversationStarterData>>() { }.type
-                val convoLogList: MutableList<ConversationStarterData> = Gson().fromJson(convoLogSerialized, collectionType)
-                convoLogList.add(newLogEntry)
-                val newConvoLogArray = convoLogList.toTypedArray()
-                convoLogSerialized = Gson().toJson(newConvoLogArray)
-                Log.i(TAG, convoLogSerialized)
-                with(prefs!!.edit()) {
-                    putString("convo_log", convoLogSerialized)
-                    commit()
-                }
+//                var convoLogSerialized = prefs!!.getString("convo_log", "default")
+//                val collectionType: Type = object : TypeToken<Collection<ConversationStarterData>>() { }.type
+//                val convoLogList: MutableList<ConversationStarterData> = Gson().fromJson(convoLogSerialized, collectionType)
+//                convoLogList.add(newLogEntry)
+//                val newConvoLogArray = convoLogList.toTypedArray()
+//                convoLogSerialized = Gson().toJson(newConvoLogArray)
+//                Log.i(TAG, convoLogSerialized)
+//                with(prefs!!.edit()) {
+//                    putString("convo_log", convoLogSerialized)
+//                    commit()
+//                }
+                appInstance.repository.addToLog(this, newLogEntry)
 
                 // Return to main activity
                 val intent = Intent(this, MainActivity::class.java)
