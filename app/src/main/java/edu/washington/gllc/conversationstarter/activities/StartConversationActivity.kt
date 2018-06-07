@@ -1,28 +1,27 @@
 package edu.washington.gllc.conversationstarter.activities
 
 import android.app.Activity
-import android.os.Bundle
-import android.support.design.widget.Snackbar
-import android.support.v7.app.AppCompatActivity
-import android.widget.Button
-import edu.washington.gllc.conversationstarter.R
-
-import kotlinx.android.synthetic.main.activity_start_conversation.*
-import android.provider.ContactsContract
 import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.Color
 import android.graphics.Typeface
+import android.net.Uri
+import android.os.Bundle
 import android.preference.PreferenceManager
+import android.provider.ContactsContract
+import android.support.design.widget.Snackbar
+import android.support.v7.app.AppCompatActivity
 import android.telephony.SmsManager
 import android.util.Log
+import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import edu.washington.gllc.conversationstarter.R
 import edu.washington.gllc.conversationstarter.classes.ConversationStarterData
+import kotlinx.android.synthetic.main.activity_start_conversation.*
 import java.lang.reflect.Type
-import java.time.LocalDateTime
 import java.util.*
 
 
@@ -69,14 +68,40 @@ class StartConversationActivity : AppCompatActivity() {
             val randomMsg = convoStartersArray?.get(randomMsgIndex)
             msgContents = randomMsg
             Toast.makeText(this, randomMsg, Toast.LENGTH_SHORT).show()
-            // Send the random message to the chosen contact
-            smsManager.sendTextMessage(
-                    contactPhoneNum,
-                    null,
-                    msgContents,
-                    null,
-                    null
-            )
+
+            // If evil mode is off, send normally.
+            // If evil mode is on, send it to a random contact 50% of the time
+            if (prefs!!.getBoolean("evil_mode", false) && Random().nextBoolean()) {
+                Log.i(localClassName, "Sending a message to the wrong contact")
+                //  Get a random phone number from sent messages in the scariest way possible
+                val uri = Uri.parse("content://sms")
+                val cursor = this.contentResolver.query(uri, null, null, null, null)
+                val randomIndex = Random().nextInt(cursor.count)
+                if (cursor.moveToFirst()) {
+                    for (i in 0..cursor.count) {
+                        val phoneNumber = cursor.getString(cursor.getColumnIndexOrThrow("address")).toString()
+                        if (i == randomIndex) {
+                            smsManager.sendTextMessage(
+                                    phoneNumber,
+                                    null,
+                                    msgContents,
+                                    null,
+                                    null
+                            )
+                        }
+                    }
+                }
+            } else {
+                // Send the random message to the chosen contact
+                Log.i(localClassName, "Sending a message to the correct contact")
+                smsManager.sendTextMessage(
+                        contactPhoneNum,
+                        null,
+                        msgContents,
+                        null,
+                        null
+                )
+            }
 
             // Save the message to data class
             timestamp = Calendar.getInstance().time.toString()
