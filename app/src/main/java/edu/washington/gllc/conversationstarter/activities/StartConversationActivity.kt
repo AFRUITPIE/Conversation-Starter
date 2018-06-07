@@ -1,6 +1,14 @@
 package edu.washington.gllc.conversationstarter.activities
 
 import android.app.Activity
+import android.os.Bundle
+import android.support.design.widget.Snackbar
+import android.support.v7.app.AppCompatActivity
+import android.widget.Button
+import edu.washington.gllc.conversationstarter.R
+
+import kotlinx.android.synthetic.main.activity_start_conversation.*
+import android.provider.ContactsContract
 import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.Color
@@ -18,10 +26,10 @@ import android.widget.TextView
 import android.widget.Toast
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import edu.washington.gllc.conversationstarter.R
+import edu.washington.gllc.conversationstarter.ConversationStarterApp
 import edu.washington.gllc.conversationstarter.classes.ConversationStarterData
-import kotlinx.android.synthetic.main.activity_start_conversation.*
 import java.lang.reflect.Type
+import java.time.LocalDateTime
 import java.util.*
 
 
@@ -33,6 +41,8 @@ class StartConversationActivity : AppCompatActivity() {
     private var contactPhoneNum: String? = null
     private var msgContents: String? = null
     private var timestamp: String? = null
+    private var appInstance = ConversationStarterApp.getSingletonInstance()
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -48,14 +58,16 @@ class StartConversationActivity : AppCompatActivity() {
         fab.hide()
 
         // Get conversation starters
-        val convoStarters = prefs!!.getString("convo_array", "default")
-        convoStartersArray = Gson().fromJson(convoStarters, Array<String>::class.java)
+//        val convoStarters = prefs!!.getString("convo_array", "default")
+//        Log.i(TAG, convoStarters)
+//        convoStartersArray = Gson().fromJson(convoStarters, Array<String>::class.java)
+        convoStartersArray = appInstance.repository.getAllStarters()
 
         // Set up floating action button message
         fab.setOnClickListener { view ->
             // Show the "Message Sent!" snackbar
-            Snackbar.make(view, "Message sent!", Snackbar.LENGTH_LONG)
-                    .setAction("Action", null).show()
+//            Snackbar.make(view, "Message sent!", Snackbar.LENGTH_LONG)
+//                    .setAction("Action", null).show()
             // Set the .random() function on a range
             fun ClosedRange<Int>.random() =
                     Random().nextInt(endInclusive - 1) + start
@@ -106,7 +118,7 @@ class StartConversationActivity : AppCompatActivity() {
             // Save the message to data class
             timestamp = Calendar.getInstance().time.toString()
             val newLogEntry = ConversationStarterData(contactDisplayName as String, contactPhoneNum as String, msgContents as String, timestamp as String)
-            Log.i("startConversation", newLogEntry.toString())
+            Log.i(TAG, newLogEntry.toString())
             // Get existing log from SharedPrefs
             if (!prefs!!.contains("convo_log")) {
                 with(prefs!!.edit()) {
@@ -122,11 +134,15 @@ class StartConversationActivity : AppCompatActivity() {
             convoLogList.add(newLogEntry)
             val newConvoLogArray = convoLogList.toTypedArray()
             convoLogSerialized = Gson().toJson(newConvoLogArray)
-            Log.i("startConversation", convoLogSerialized)
+            Log.i(TAG, convoLogSerialized)
             with(prefs!!.edit()) {
                 putString("convo_log", convoLogSerialized)
                 commit()
             }
+
+            // Return to main activity
+            val intent = Intent(this, MainActivity::class.java)
+            startActivity(intent)
         }
 
         // Start an intent to choose a contact via the device's default phone/contacts app
@@ -151,8 +167,8 @@ class StartConversationActivity : AppCompatActivity() {
             val nameColumn = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME)
             contactPhoneNum = cursor.getString(phoneNumColumn)
             contactDisplayName = cursor.getString(nameColumn)
-            Log.i("startConversation", contactPhoneNum)
-            Log.i("startConversation", contactDisplayName)
+            Log.i(TAG, contactPhoneNum)
+            Log.i(TAG, contactDisplayName)
             cursor.close()
 
             // Update the TextViews with the selected contact's info
@@ -174,5 +190,6 @@ class StartConversationActivity : AppCompatActivity() {
 
     companion object {
         const val PICK_CONTACT: Int = 1337
+        const val TAG: String = "StartConversation"
     }
 }
