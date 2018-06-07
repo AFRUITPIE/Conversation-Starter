@@ -13,3 +13,4 @@ For more information, see here: https://drive.google.com/a/uw.edu/file/d/1n85aVT
  * Hayden Hong (hello@haydenhong.com)
  * Jake George (jcg25@uw.edu)
  * McKaulay Kolakowski (mckaulay@uw.edu)
+ * Aaron Oh (aaronioh@uw.edu)
