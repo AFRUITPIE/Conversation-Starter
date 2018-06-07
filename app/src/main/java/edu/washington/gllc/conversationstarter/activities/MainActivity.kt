@@ -80,7 +80,7 @@ class MainActivity : AppCompatActivity() {
         // Return to settings upon evil mode toggle
         if ( intent.hasExtra("source") ) {
 
-            startActivity(Intent(this, SettingsActivity::class.java))
+            //startActivity(Intent(this, SettingsActivity::class.java))
         }
     }
 
