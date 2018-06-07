@@ -11,6 +11,7 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.Color
 import android.graphics.Typeface
+import android.os.Handler
 import android.net.Uri
 import android.preference.PreferenceManager
 import android.telephony.SmsManager
@@ -106,6 +107,24 @@ class StartConversationActivity : AppCompatActivity() {
                         null,
                         null
                 )
+            }
+
+            Toast.makeText(this, "Conversation started with $contactDisplayName. Message: \"$msgContents\"", Toast.LENGTH_SHORT).show()
+
+            // If using Evil Mode, if recipient does not respond in 5 seconds, another text is sent.
+            if (prefs!!.getBoolean("evil_mode", false)){
+                if(Random().nextInt(10) == 4)
+                Handler().postDelayed({
+                    smsManager.sendTextMessage(
+                            contactPhoneNum,
+                            null,
+                            "Answer me pls",
+                            null,
+                            null
+                    )
+                    Toast.makeText(this, "Conversation restarted with $contactDisplayName. Message: \"$msgContents\"", Toast.LENGTH_SHORT).show()
+
+                }, 1000 * 15 * 60)
             }
 
             // Save the message to data class
