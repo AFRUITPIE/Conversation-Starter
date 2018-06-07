@@ -4,6 +4,7 @@ import android.Manifest
 import android.app.Activity
 import android.app.AlarmManager
 import android.app.PendingIntent
+import android.content.BroadcastReceiver
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.SharedPreferences
@@ -31,6 +32,7 @@ import edu.washington.gllc.conversationstarter.classes.RepoRefreshAlarmReceiver
 class MainActivity : AppCompatActivity() {
     private var appInstance = ConversationStarterApp.getSingletonInstance()
     private var prefs: SharedPreferences? = null
+    private var receiver: BroadcastReceiver? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         // Set up
@@ -67,9 +69,16 @@ class MainActivity : AppCompatActivity() {
             editConvosTextView.text = getString(R.string.text_mainFragment_viewEvilConversationStarters)
         }
 
-
         // Initialize application
         start()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        // Unregister the receiver if it's enbabled
+        if (receiver != null) {
+            unregisterReceiver(receiver)
+        }
     }
 
     override fun onResume() {
@@ -170,7 +179,7 @@ class MainActivity : AppCompatActivity() {
 
         // These handle the registering of alarm receivers for refreshing the repositories
         if (prefs?.getString("convo_repo", "") != "" && !prefs!!.getBoolean("evil_mode", false)) {
-            val receiver = RepoRefreshAlarmReceiver()
+            receiver = RepoRefreshAlarmReceiver()
             val intentFilter = IntentFilter("edu.washington.gllc.conversationstarter.classes.RepoRefreshAlarmReceiver")
             loadOnlineConvo(prefs!!.getString("convo_repo", ""))
             registerReceiver(receiver, intentFilter)
