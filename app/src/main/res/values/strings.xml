@@ -21,6 +21,8 @@
     <string name="evil_repo_summary">Load evil conversations from the internet. Leave blank to use the defaults.</string>
     <string name="snackbar_repo">Online repo set</string>
     <string name="snackbar_action">Clear repo</string>
+    <string name="ignore_prebaked_summary">Ignore all built-in starters (for non-Evil Mode).</string>
+    <string name="ignore_prebaked_title">Ignore Built-in Starters</string>
 
     <!-- Strings related to editing starters (EditConvoActivity) -->
     <string name="delete_dialog_message">Deleting this cannot be undone</string>
