@@ -154,6 +154,62 @@ class ConversationStarterRepo {
         }
     }
 
+    public fun saveRepoDataToStorage(context: Context) {
+        try {
+            val intStorageFile = File(context.applicationContext.filesDir, "cs_online")
+            if (intStorageFile.exists()) {
+                intStorageFile.delete()
+            }
+            val stringToSave = getRepoStartersAsJson()
+            intStorageFile.createNewFile()
+            intStorageFile.writeText(stringToSave)
+        }
+        catch(e: Exception) {
+            Log.e(TAG, e.toString())
+        }
+    }
+
+    public fun expandRepoDataFromStorage(context: Context) {
+        try {
+            val intStorageFile = File(context.applicationContext.filesDir, "cs_online")
+            if (intStorageFile.exists()) {
+                val stringFromStorage = intStorageFile.readText()
+                setRepoStarters(stringFromStorage)
+            }
+        }
+        catch(e: Exception) {
+            Log.e(TAG, e.toString())
+        }
+    }
+
+    public fun saveEvilRepoDataToStorage(context: Context) {
+        try {
+            val intStorageFile = File(context.applicationContext.filesDir, "cs_evilonline")
+            if (intStorageFile.exists()) {
+                intStorageFile.delete()
+            }
+            val stringToSave = getEvilRepoStartersAsJson()
+            intStorageFile.createNewFile()
+            intStorageFile.writeText(stringToSave)
+        }
+        catch(e: Exception) {
+            Log.e(TAG, e.toString())
+        }
+    }
+
+    public fun expandEvilRepoDataFromStorage(context: Context) {
+        try {
+            val intStorageFile = File(context.applicationContext.filesDir, "cs_evilonline")
+            if (intStorageFile.exists()) {
+                val stringFromStorage = intStorageFile.readText()
+                setEvilRepoStarters(stringFromStorage)
+            }
+        }
+        catch(e: Exception) {
+            Log.e(TAG, e.toString())
+        }
+    }
+
     public fun saveLogDataToStorage(context: Context, logArray: Array<ConversationStarterData>?) {
         try {
             val intStorageFile = File(context.applicationContext.filesDir, "cs_log")
