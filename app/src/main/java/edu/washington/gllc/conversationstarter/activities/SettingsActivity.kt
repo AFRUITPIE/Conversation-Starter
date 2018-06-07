@@ -108,6 +108,7 @@ class SettingsActivity : AppCompatPreferenceActivity() {
             // to their values. When their values change, their summaries are
             // updated to reflect the new value, per the Android Design
             // guidelines.
+            bindPreferenceSummaryToValue(findPreference("refresh_time_evil"))
         }
 
         override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -143,8 +144,8 @@ class SettingsActivity : AppCompatPreferenceActivity() {
                         else
                             null)
 
-            } else if (preference.key == "refresh_time") {
-                preference.summary = "$stringValue minutes"
+            } else if (preference.key == "refresh_time" || preference.key == "refresh_time_evil") {
+                preference.summary = "${Integer.parseInt(stringValue) + 1} minutes"
             } else if (preference.key == "convo_repo" && value == "null") {
                 preference.summary = "No repository set"
             } else {

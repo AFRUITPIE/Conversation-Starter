@@ -1,11 +1,6 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <SwitchPreference
         android:defaultValue="false"
-        android:key="evil_mode"
-        android:summary="@string/evil_mode_summary"
-        android:title="@string/evil_mode_title" />
-    <SwitchPreference
-        android:defaultValue="false"
         android:key="ignore_prebaked"
         android:summary="@string/ignore_prebaked_summary"
         android:title="@string/ignore_prebaked_title" />

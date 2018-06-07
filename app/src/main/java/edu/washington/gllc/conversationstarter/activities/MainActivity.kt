@@ -1,7 +1,12 @@
 package edu.washington.gllc.conversationstarter.activities
 
 import android.Manifest
+import android.app.Activity
+import android.app.AlarmManager
+import android.app.PendingIntent
+import android.content.BroadcastReceiver
 import android.content.Intent
+import android.content.IntentFilter
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.os.Bundle
@@ -22,11 +27,12 @@ import com.android.volley.toolbox.Volley
 import com.google.gson.Gson
 import edu.washington.gllc.conversationstarter.ConversationStarterApp
 import edu.washington.gllc.conversationstarter.R
-import java.util.*
+import edu.washington.gllc.conversationstarter.classes.RepoRefreshAlarmReceiver
 
 class MainActivity : AppCompatActivity() {
     private var appInstance = ConversationStarterApp.getSingletonInstance()
     private var prefs: SharedPreferences? = null
+    private var receiver: BroadcastReceiver? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         // Set up
@@ -63,9 +69,16 @@ class MainActivity : AppCompatActivity() {
             editConvosTextView.text = getString(R.string.text_mainFragment_viewEvilConversationStarters)
         }
 
-
         // Initialize application
         start()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        // Unregister the receiver if it's enbabled
+        if (receiver != null) {
+            unregisterReceiver(receiver)
+        }
     }
 
     override fun onResume() {
@@ -161,12 +174,38 @@ class MainActivity : AppCompatActivity() {
     // Handles all the starting stuff like getting preferences and setting conversations
     private fun start() {
         prefs = PreferenceManager.getDefaultSharedPreferences(this)
-        // Ensures there are some garbage placeholders
-//        handleConvoJson("convo_included", "[\"Hello\", \"Hey, long time no see! What's up?\", \"Lol what's up kiddo\", \"Hey what's up?\", \"You want to go get dinner or something soon?\", \"The mitochondria is the powerhouse of the cell\", \"Android development is pretty cool\", \"Want to get coffee tomorrow?\", \"This is from the PLACEHOLDERS!\"]")
 
-        // Load online repo if one is set
-        if (prefs?.getString("convo_repo", "") != "") {
+        val intent = Intent("edu.washington.gllc.conversationstarter.classes.RepoRefreshAlarmReceiver")
+
+        // These handle the registering of alarm receivers for refreshing the repositories
+        if (prefs?.getString("convo_repo", "") != "" && !prefs!!.getBoolean("evil_mode", false)) {
+            receiver = RepoRefreshAlarmReceiver()
+            val intentFilter = IntentFilter("edu.washington.gllc.conversationstarter.classes.RepoRefreshAlarmReceiver")
             loadOnlineConvo(prefs!!.getString("convo_repo", ""))
+            registerReceiver(receiver, intentFilter)
+            val alarmManager = getSystemService(Activity.ALARM_SERVICE) as AlarmManager
+            intent.putExtra("url", prefs?.getString("convo_repo", ""))
+            val pendingIntent = PendingIntent.getBroadcast(applicationContext, 234, intent, 0)
+            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP,
+                    System.currentTimeMillis(),
+                    (60 * 1000 * (prefs!!.getInt("refresh_time", 5) + 1)).toLong(),
+                    pendingIntent)
+            Log.i(localClassName, "Registered a regular online repo request timer")
+        }
+
+        if (prefs?.getString("convo_repo_evil", "") != "" && prefs!!.getBoolean("evil_mode", false)) {
+            val receiver = RepoRefreshAlarmReceiver()
+            val intentFilter = IntentFilter("edu.washington.gllc.conversationstarter.classes.RepoRefreshAlarmReceiver")
+            loadOnlineConvo(prefs!!.getString("convo_repo_evil", ""))
+            registerReceiver(receiver, intentFilter)
+            val alarmManager = getSystemService(Activity.ALARM_SERVICE) as AlarmManager
+            intent.putExtra("url", prefs?.getString("convo_repo_evil", ""))
+            val pendingIntent = PendingIntent.getBroadcast(applicationContext, 234, intent, 0)
+            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP,
+                    System.currentTimeMillis(),
+                    (60 * 1000 * (prefs!!.getInt("refresh_time_evil", 5) + 1)).toLong(),
+                    pendingIntent)
+            Log.i(localClassName, "Registered an evil online repo request timer")
         }
 
         // Log the current state of the array
@@ -187,6 +226,7 @@ class MainActivity : AppCompatActivity() {
                     Log.i(localClassName, "Set new normal conversation successfully")
                 },
                 Response.ErrorListener {
+                    Toast.makeText(this, "The URL you provided doesn't work :(", Toast.LENGTH_SHORT).show()
                     Log.i(localClassName, "Unable to load online repo")
                 })
         // Add the request to the RequestQueue.
@@ -222,7 +262,14 @@ class MainActivity : AppCompatActivity() {
         // Update the repo
         when(key) {
             "convo_local" -> appInstance.repository.setLocalStarters(convoJson)
-            "convo_online" -> appInstance.repository.setRepoStarters(convoJson)
+
+            "convo_online" -> {
+                if (prefs!!.getBoolean("evil_mode", false)) {
+                    appInstance.repository.setEvilRepoStarters(convoJson)
+                } else {
+                    appInstance.repository.setRepoStarters(convoJson)
+                }
+            }
         }
         prefs?.edit()?.putString(key, convoJson)?.apply() // Override with new conversations from internet
         // Re-compile all three conversation sources
