@@ -241,8 +241,13 @@ class MainActivity : AppCompatActivity() {
         // Request a string response from the provided URL.
         val stringRequest = StringRequest(Request.Method.GET, url,
                 Response.Listener<String> { response ->
-                    handleConvoJson("convo_online", response)
-                    Log.i(localClassName, "Set new normal conversation successfully")
+                    if (response != "null") {
+                        handleConvoJson("convo_online", response)
+                        Log.i(localClassName, "Set new normal conversation successfully")
+                    } else {
+                        Log.e(localClassName, "Volley returned null")
+                        Toast.makeText(this, "JSON returned was null, possibly a broken URL", Toast.LENGTH_SHORT).show()
+                    }
                 },
                 Response.ErrorListener {
                     Toast.makeText(this, "The URL you provided doesn't work :(", Toast.LENGTH_SHORT).show()
