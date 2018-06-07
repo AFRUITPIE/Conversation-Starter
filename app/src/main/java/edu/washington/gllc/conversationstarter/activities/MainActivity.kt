@@ -97,7 +97,11 @@ class MainActivity : AppCompatActivity() {
         super.onPause()
         // Unregister the receiver if it's enbabled
         if (receiver != null) {
-            unregisterReceiver(receiver)
+            try {
+                unregisterReceiver(receiver)
+            } catch (ex: Exception) {
+                // Do nothing, this is just for if there's no registered receiver
+            }
         }
     }
 
